@@ -1,0 +1,613 @@
+# =============================================================================
+# AI Model Validation PoC - Comprehensive .gitignore
+# Protects sensitive data, large files, and confidential information
+# =============================================================================
+
+# =============================================================================
+# SENSITIVE DATA & CREDENTIALS (CRITICAL SECURITY)
+# =============================================================================
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.env
+.envrc
+
+# API Keys and credentials
+**/api_keys/
+**/secrets/
+**/credentials/
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+credentials.json
+service-account.json
+auth.json
+
+# Configuration files with sensitive data
+config.json
+settings.json
+**/config/production/
+**/config/staging/
+**/config/secrets/
+
+# Database credentials and connection strings
+database.ini
+db_config.json
+connection_strings.txt
+
+# SSH keys
+id_rsa
+id_rsa.pub
+*.pem
+authorized_keys
+
+# =============================================================================
+# LARGE FILES & DATASETS (PREVENT GITHUB SIZE LIMITS)
+# =============================================================================
+
+# Image datasets and media files
+**/datasets/
+**/data/raw/
+**/data/processed/
+**/images/
+**/videos/
+**/media/
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tiff
+*.tif
+*.gif
+*.webp
+*.svg
+*.ico
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+*.webm
+*.m4v
+*.3gp
+
+# Audio files
+*.mp3
+*.wav
+*.flac
+*.aac
+*.ogg
+*.wma
+*.m4a
+
+# Archive files
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.gz
+*.bz2
+*.xz
+
+# Large documents
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.xls
+*.xlsx
+
+# =============================================================================
+# ML MODELS & TRAINING ARTIFACTS (CAN BE VERY LARGE)
+# =============================================================================
+
+# Model files and weights
+**/models/
+**/weights/
+**/checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.hdf5
+*.pb
+*.onnx
+*.tflite
+*.mlmodel
+*.pkl
+*.pickle
+*.joblib
+*.model
+*.bin
+*.safetensors
+
+# Training artifacts
+**/runs/
+**/logs/training/
+**/tensorboard/
+**/wandb/
+**/mlflow/
+events.out.tfevents.*
+*.log
+
+# YOLO specific files
+**/yolo_runs/
+**/exp*/
+best.pt
+last.pt
+yolov*.pt
+
+# =============================================================================
+# CVAT & ANNOTATION DATA
+# =============================================================================
+
+# CVAT exports and annotation files
+**/cvat_exports/
+**/annotations/
+*.xml
+*.json
+**/coco/
+**/pascal_voc/
+**/yolo_format/
+task_*.zip
+
+# Annotation backup files
+*_backup.json
+*_backup.xml
+annotations_*.zip
+
+# =============================================================================
+# DEEPCHECKS & VALIDATION OUTPUTS
+# =============================================================================
+
+# Deepchecks reports and artifacts
+**/deepchecks_reports/
+**/validation_reports/
+**/quality_reports/
+*.html
+validation_results_*.json
+quality_analysis_*.png
+
+# Data drift and model monitoring
+**/drift_reports/
+**/monitoring_data/
+drift_*.json
+monitoring_*.json
+
+# =============================================================================
+# PYTHON SPECIFIC
+# =============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# =============================================================================
+# NODE.JS & JAVASCRIPT (FOR TESTING FRAMEWORK)
+# =============================================================================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# Grunt intermediate storage
+.grunt
+
+# Bower dependency directory
+bower_components
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# Storybook build outputs
+.out
+.storybook-out
+
+# Temporary folders
+tmp/
+temp/
+
+# =============================================================================
+# CLAUDE FLOW & AI SPECIFIC
+# =============================================================================
+
+# Claude Flow coordination data
+.claude-flow/
+coordination/memory_bank/
+coordination/orchestration/
+memory/claude-flow-data.json
+**/swarm_data/
+**/agent_logs/
+
+# AI model caches
+**/transformers_cache/
+**/huggingface_cache/
+**/torch_cache/
+
+# =============================================================================
+# OPERATING SYSTEM FILES
+# =============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.tmp
+*.temp
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# =============================================================================
+# IDE & EDITOR FILES
+# =============================================================================
+
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+*.vsix
+
+# JetBrains IDEs
+.idea/
+*.swp
+*.swo
+*~
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+[._]*.s[a-v][a-z]
+!*.svg
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+Session.vim
+Sessionx.vim
+.netrwhist
+*~
+tags
+[._]*.un~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+.org-id-locations
+*_archive
+*_flymake.*
+/eshell/history
+/eshell/lastdir
+/elpa/
+*.rel
+/auto/
+.auctex-auto/
+.cask/
+dist/
+flycheck_*.el
+/server/
+.projectile
+.dir-locals.el
+/network-security.data
+
+# =============================================================================
+# LOGS & TEMPORARY FILES
+# =============================================================================
+
+# Log files
+*.log
+logs/
+**/log/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# CUSTOM PROJECT EXCLUSIONS
+# =============================================================================
+
+# Project specific temporary files
+/temp_analysis/
+/scratch/
+/experimental/
+/prototype/
+
+# Backup files
+*.bak
+*.backup
+*_backup
+backup_*
+
+# Old versions
+*.old
+*_old
+old_*
+
+# Test outputs (when not needed in repo)
+test_outputs/
+test_results/
+**/test_artifacts/
+
+# Documentation builds (if generated)
+docs/build/
+docs/_build/
+site/
+
+# =============================================================================
+# SECURITY NOTES
+# =============================================================================
+
+# IMPORTANT SECURITY REMINDERS:
+# 1. Never commit API keys, passwords, or tokens
+# 2. Always use environment variables for sensitive configuration
+# 3. Review each commit to ensure no sensitive data is included
+# 4. Use .env.example to document required environment variables
+# 5. Consider using git-secrets or similar tools for additional protection
+# 6. Regularly audit this .gitignore for new sensitive file patterns
+
+# =============================================================================
+# USAGE NOTES
+# =============================================================================
+
+# This .gitignore is designed for:
+# - AI/ML projects with large datasets and models
+# - Python + Node.js development environment
+# - CVAT annotation workflows
+# - Deepchecks validation pipelines
+# - Ultralytics YOLO training
+# - TDD with Jest/pytest testing
+# - Claude Flow AI coordination
+
+# To check what files would be ignored:
+# git status --ignored
+
+# To force add an ignored file (use with caution):
+# git add -f filename
+
+# To check if a file is ignored:
+# git check-ignore filename

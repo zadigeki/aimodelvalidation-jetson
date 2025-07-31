@@ -1,0 +1,13 @@
+Phase 1: PoC - 1-2 Weeks
+▸
+Activities:
+
+Manual data capture, local annotation with CVAT, local validation scripts (Deepchecks), manual model training.
+
+Tech Stack:
+
+Laptop, Webcam, Python, CVAT, Deepchecks, Ultralytics.
+
+Success Metrics:
+
+Successful generation of data & model validation reports. Team sees feasibility.

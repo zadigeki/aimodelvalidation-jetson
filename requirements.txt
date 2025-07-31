@@ -1,0 +1,197 @@
+# AI Model Validation PoC - Python Dependencies
+# Generated for SPARC+TDD London School development environment
+
+# ==============================================================================
+# CORE AI/ML FRAMEWORKS
+# ==============================================================================
+
+# Computer Vision & Object Detection
+ultralytics>=8.0.0              # YOLO models for object detection and training
+opencv-python>=4.8.0            # Computer vision operations and webcam capture
+opencv-contrib-python>=4.8.0    # Additional OpenCV modules
+Pillow>=10.0.0                   # Image processing and manipulation
+imageio>=2.31.0                  # Image I/O operations
+scikit-image>=0.21.0             # Advanced image processing algorithms
+
+# Machine Learning & Data Science
+torch>=2.0.0                     # PyTorch deep learning framework
+torchvision>=0.15.0              # PyTorch computer vision utilities
+numpy>=1.24.0                    # Numerical computing foundation
+pandas>=2.0.0                    # Data manipulation and analysis
+scikit-learn>=1.3.0              # Machine learning algorithms and utilities
+matplotlib>=3.7.0                # Plotting and visualization
+seaborn>=0.12.0                  # Statistical data visualization
+
+# ==============================================================================
+# DATA VALIDATION & QUALITY ASSURANCE
+# ==============================================================================
+
+# Deepchecks Integration
+deepchecks>=0.17.0               # ML model and data validation suite
+deepchecks[vision]>=0.17.0       # Computer vision specific validations
+great-expectations>=0.17.0       # Data quality and validation framework
+
+# Data Processing & Validation
+jsonschema>=4.19.0               # JSON schema validation
+cerberus>=1.3.4                  # Data validation and normalization
+pydantic>=2.0.0                  # Data validation using Python type annotations
+marshmallow>=3.20.0              # Object serialization/deserialization
+
+# ==============================================================================
+# ANNOTATION & LABELING TOOLS
+# ==============================================================================
+
+# CVAT Integration & Annotation Tools
+cvat-sdk>=2.5.0                  # CVAT Python SDK for programmatic access
+labelme>=5.3.0                   # Polygon annotation tool
+pycocotools>=2.0.6               # COCO dataset format utilities
+shapely>=2.0.0                   # Geometric operations for annotations
+
+# ==============================================================================
+# WEB & API FRAMEWORKS
+# ==============================================================================
+
+# Web Framework & API
+fastapi>=0.104.0                 # Modern web framework for APIs
+uvicorn>=0.24.0                  # ASGI server for FastAPI
+pydantic-settings>=2.0.0         # Settings management for FastAPI
+httpx>=0.25.0                    # HTTP client for API integration
+requests>=2.31.0                 # HTTP library for API calls
+aiohttp>=3.8.0                   # Async HTTP client/server
+
+# ==============================================================================
+# TESTING FRAMEWORK (TDD LONDON SCHOOL)
+# ==============================================================================
+
+# Core Testing
+pytest>=7.4.0                   # Testing framework
+pytest-asyncio>=0.21.0          # Async testing support
+pytest-cov>=4.1.0               # Coverage reporting
+pytest-mock>=3.11.0             # Mock object support
+pytest-xdist>=3.3.0             # Parallel test execution
+
+# Mock & Test Utilities  
+unittest-mock>=1.0.1            # Enhanced mocking capabilities
+responses>=0.23.0               # Mock HTTP requests
+factory-boy>=3.3.0              # Test data generation
+faker>=19.0.0                   # Fake data generation
+freezegun>=1.2.0                # Time mocking utilities
+
+# Test Data & Fixtures
+pytest-fixtures>=0.1.0          # Enhanced test fixtures
+pytest-factoryboy>=2.5.0        # Factory integration with pytest
+
+# ==============================================================================
+# CONFIGURATION & ENVIRONMENT
+# ==============================================================================
+
+# Configuration Management
+pyyaml>=6.0.1                   # YAML configuration files
+python-dotenv>=1.0.0            # Environment variable management
+configparser>=5.3.0             # Configuration file parsing
+click>=8.1.0                    # Command line interface creation
+
+# ==============================================================================
+# LOGGING & MONITORING
+# ==============================================================================
+
+# Logging & Monitoring
+loguru>=0.7.0                   # Advanced logging with better defaults
+structlog>=23.1.0               # Structured logging
+prometheus-client>=0.17.0       # Metrics collection and monitoring
+psutil>=5.9.0                   # System and process monitoring
+
+# ==============================================================================
+# DATABASE & PERSISTENCE
+# ==============================================================================
+
+# Database & Storage
+sqlalchemy>=2.0.0               # SQL toolkit and ORM
+alembic>=1.12.0                 # Database migration tool
+sqlite3                         # Lightweight database (built-in)
+redis>=4.6.0                    # In-memory data structure store
+
+# ==============================================================================
+# ASYNC & CONCURRENCY
+# ==============================================================================
+
+# Async & Task Management
+asyncio                          # Async programming (built-in)
+aiofiles>=23.2.1                # Async file operations
+celery>=5.3.0                   # Distributed task queue
+kombu>=5.3.0                    # Messaging library
+
+# ==============================================================================
+# UTILITIES & HELPERS
+# ==============================================================================
+
+# General Utilities
+tqdm>=4.66.0                    # Progress bars
+rich>=13.5.0                    # Rich text and beautiful formatting
+typer>=0.9.0                    # CLI applications with type hints
+pathlib                         # Object-oriented filesystem paths (built-in)
+datetime                        # Date and time handling (built-in)
+json                            # JSON encoder/decoder (built-in)
+os                              # Operating system interface (built-in)
+sys                             # System-specific parameters (built-in)
+subprocess                      # Subprocess management (built-in)
+threading                       # Thread-based parallelism (built-in)
+multiprocessing                 # Process-based parallelism (built-in)
+
+# File & Data Handling
+zipfile                         # ZIP archive handling (built-in)
+tarfile                         # TAR archive handling (built-in)
+shutil                          # High-level file operations (built-in)
+glob                            # Unix-style pathname pattern expansion (built-in)
+tempfile                        # Temporary file and directory creation (built-in)
+
+# ==============================================================================
+# DEVELOPMENT & CODE QUALITY
+# ==============================================================================
+
+# Code Quality & Formatting
+black>=23.7.0                   # Code formatter
+isort>=5.12.0                   # Import sorter
+flake8>=6.0.0                   # Linting and style guide enforcement
+mypy>=1.5.0                     # Static type checker
+pre-commit>=3.4.0               # Git pre-commit hooks
+
+# ==============================================================================
+# SECURITY & VALIDATION
+# ==============================================================================
+
+# Security
+cryptography>=41.0.0            # Cryptographic recipes and primitives
+bcrypt>=4.0.0                   # Password hashing
+python-jose>=3.3.0              # JSON Web Token implementation
+passlib>=1.7.4                  # Password hashing utilities
+
+# ==============================================================================
+# OPTIONAL: JUPYTER & NOTEBOOK SUPPORT
+# ==============================================================================
+
+# Jupyter Notebook Support (Optional - for experimentation)
+jupyter>=1.0.0                  # Jupyter notebook environment
+ipykernel>=6.25.0               # IPython kernel for Jupyter
+notebook>=7.0.0                 # Jupyter notebook server
+
+# ==============================================================================
+# VERSION CONSTRAINTS & COMPATIBILITY
+# ==============================================================================
+
+# Python Version Requirement
+# Requires Python >= 3.8, < 4.0
+# Optimized for Python 3.9+ for best performance with async operations
+
+# ==============================================================================
+# INSTALLATION NOTES
+# ==============================================================================
+
+# Installation Commands:
+# pip install -r requirements.txt
+# 
+# For development with all optional dependencies:
+# pip install -r requirements.txt -r requirements-dev.txt
+#
+# For production (minimal dependencies):
+# pip install -r requirements-prod.txt

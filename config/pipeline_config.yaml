@@ -1,0 +1,368 @@
+# AI Model Validation PoC - Pipeline Configuration Template
+# This file serves as both documentation and a working configuration template
+
+pipeline_metadata:
+  name: "AI Model Validation PoC"
+  version: "1.0.0"
+  description: "Complete ML pipeline for computer vision model validation"
+  author: "ML Team"
+  created_date: "2025-07-31"
+
+# Data Capture Configuration
+data_capture:
+  webcam:
+    device_id: 0  # Default webcam (0), or specify specific device
+    resolution:
+      width: 1280
+      height: 720
+    formats:
+      image: "JPEG"  # JPEG, PNG, BMP
+      video: "MP4"   # MP4, AVI
+    quality:
+      image_quality: 95  # JPEG quality (1-100)
+      video_fps: 15      # Frames per second for video
+      video_bitrate: "2M" # Video bitrate
+  
+  storage:
+    base_directory: "./data/captured"
+    directory_structure: "date_session"  # date_session, timestamp, custom
+    backup_enabled: true
+    backup_directory: "./data/backups"
+    max_storage_gb: 50
+    cleanup_policy:
+      enabled: true
+      retention_days: 30
+      
+  session:
+    auto_increment_session: true
+    session_metadata: true
+    capture_batch_size: 100
+    progress_reporting: true
+
+# CVAT Integration Configuration  
+cvat_integration:
+  server:
+    host: "localhost"
+    port: 8080
+    protocol: "http"
+    admin_username: "admin"
+    admin_password: "admin"  # Change in production!
+    
+  docker:
+    compose_file: "./docker/cvat-docker-compose.yml"
+    auto_start: true
+    health_check_timeout: 120  # seconds
+    restart_policy: "unless-stopped"
+    
+  task_management:
+    task_name_template: "PoC_Session_{session_id}_{timestamp}"
+    default_assignee: "annotator1"
+    task_subset_size: 500  # Max images per CVAT task
+    overlap_frames: 0
+    segment_size: 100
+    
+  annotation_settings:
+    supported_formats: ["COCO", "YOLO", "Pascal VOC"]
+    default_export_format: "YOLO"
+    annotation_types: ["bounding_box", "polygon", "keypoint"]
+    quality_control:
+      enabled: true
+      min_annotations_per_image: 1
+      max_annotations_per_image: 50
+      bbox_min_area: 100
+      
+  data_import:
+    chunk_size: 32  # Images per chunk during upload
+    image_quality: 95
+    create_manifest: true
+    sort_images: true
+
+# Data Validation Configuration (Deepchecks)
+data_validation:
+  deepchecks:
+    suite_type: "vision"  # vision, tabular, nlp
+    checks_config:
+      # Data integrity checks
+      data_integrity:
+        - "image_dataset_drift"
+        - "new_labels"
+        - "conflicting_labels" 
+        - "mixed_nulls"
+        - "data_duplicates"
+        - "outlier_sample_detection"
+        
+      # Data distribution checks  
+      data_distribution:
+        - "similar_image_leakage"
+        - "hue_variance"
+        - "brightness_variance"
+        - "mean_pixel_drift"
+        - "image_property_drift"
+        
+      # Label quality checks
+      label_quality:
+        - "label_drift" 
+        - "weak_segments_performance"
+        - "segment_performance"
+        - "prediction_drift"
+        
+    thresholds:
+      critical_threshold: 0.9   # Issues above this are critical
+      high_threshold: 0.7       # Issues above this are high priority
+      medium_threshold: 0.5     # Issues above this are medium priority
+      
+    custom_checks:
+      enabled: true
+      config_file: "./config/custom_validation_checks.py"
+      
+  quality_gates:
+    data_completeness:
+      min_annotation_coverage: 0.95
+      max_missing_labels: 0.05
+      
+    data_quality:
+      max_duplicate_ratio: 0.1
+      min_class_representation: 10  # Minimum samples per class
+      max_class_imbalance: 10.0     # Max ratio between largest/smallest class
+      
+    image_quality:
+      min_resolution: [640, 480]
+      max_blur_variance: 100
+      brightness_range: [30, 225]
+      acceptable_formats: ["JPEG", "PNG", "BMP"]
+      
+  reporting:
+    output_format: "html"  # html, json, pdf
+    include_plots: true
+    plot_format: "png"
+    detailed_mode: true
+    save_intermediate_results: true
+
+# Model Training Configuration (Ultralytics)
+model_training:
+  ultralytics:
+    model_config:
+      architecture: "yolov8n"  # yolov8n, yolov8s, yolov8m, yolov8l, yolov8x
+      pretrained: true
+      input_size: 640
+      
+    training_params:
+      epochs: 100
+      batch_size: 16
+      learning_rate: 0.01
+      momentum: 0.937
+      weight_decay: 0.0005
+      warmup_epochs: 3
+      warmup_momentum: 0.8
+      warmup_bias_lr: 0.1
+      
+    data_splits:
+      train_ratio: 0.7
+      val_ratio: 0.2  
+      test_ratio: 0.1
+      stratify: true
+      random_seed: 42
+      
+    augmentation:
+      enabled: true
+      mosaic: 1.0
+      mixup: 0.1
+      copy_paste: 0.3
+      degrees: 0.0      # Rotation
+      translate: 0.1    # Translation
+      scale: 0.9        # Scale
+      shear: 0.0        # Shear
+      perspective: 0.0  # Perspective
+      flipud: 0.0       # Vertical flip
+      fliplr: 0.5       # Horizontal flip
+      hsv_h: 0.015      # HSV hue
+      hsv_s: 0.7        # HSV saturation
+      hsv_v: 0.4        # HSV value
+      
+    optimization:
+      optimizer: "AdamW"  # AdamW, Adam, SGD
+      scheduler: "cosine" # cosine, linear, constant
+      early_stopping:
+        enabled: true
+        patience: 50
+        min_delta: 0.001
+        
+    hardware:
+      device: "auto"    # auto, cpu, cuda, mps
+      workers: 4        # Number of data loading workers
+      amp: true         # Automatic Mixed Precision
+      deterministic: false
+      
+  checkpointing:
+    save_best_only: true
+    save_last: true
+    save_period: 10   # Save every N epochs
+    monitor_metric: "mAP50"
+    
+  logging:
+    wandb_enabled: false
+    tensorboard_enabled: true
+    log_images: true
+    log_frequency: 10  # Log every N batches
+
+# Model Validation Configuration
+model_validation:
+  deepchecks_model:
+    suite_type: "vision_model_validation"
+    performance_checks:
+      - "model_error_analysis" 
+      - "confusion_matrix_report"
+      - "roc_report"
+      - "precision_recall_report"
+      - "calibration_metric"
+      - "segment_performance"
+      
+    robustness_checks:
+      - "image_property_drift"
+      - "prediction_drift" 
+      - "model_inference_time"
+      - "weak_segments_performance"
+      
+    custom_metrics:
+      enabled: true
+      metrics:
+        - "mean_average_precision"
+        - "intersection_over_union"
+        - "classification_accuracy"
+        - "detection_precision"
+        - "detection_recall"
+        
+  performance_thresholds:
+    minimum_requirements:
+      mAP50: 0.3
+      mAP50_95: 0.2  
+      precision: 0.5
+      recall: 0.4
+      f1_score: 0.45
+      
+    target_performance:
+      mAP50: 0.6
+      mAP50_95: 0.4
+      precision: 0.7
+      recall: 0.65
+      f1_score: 0.68
+      
+    inference_requirements:
+      max_inference_time_ms: 100
+      max_model_size_mb: 50
+      max_memory_usage_gb: 4
+      
+  test_scenarios:
+    robustness_tests:
+      brightness_variation: [-20, 20]  # Pixel value adjustment
+      contrast_variation: [0.8, 1.2]   # Contrast multiplier
+      noise_injection: [0, 0.1]        # Gaussian noise std
+      rotation_angles: [-15, 15]       # Degrees
+      scale_factors: [0.8, 1.2]        # Scale multipliers
+      
+    edge_cases:
+      very_small_objects: true
+      very_large_objects: true
+      cluttered_scenes: true
+      low_light_conditions: true
+      high_contrast_conditions: true
+
+# Reporting Configuration
+reporting:
+  output_settings:
+    base_directory: "./reports"
+    timestamp_reports: true
+    formats: ["html", "pdf", "json"]
+    
+  report_sections:
+    executive_summary: true
+    technical_details: true
+    visualizations: true
+    recommendations: true
+    appendices: true
+    
+  visualization:
+    plot_style: "seaborn"  # matplotlib, seaborn, plotly
+    color_palette: "viridis"
+    figure_dpi: 300
+    save_plots: true
+    plot_formats: ["png", "svg"]
+    
+  stakeholder_reports:
+    business_summary:
+      enabled: true
+      template: "./templates/business_report.html"
+      include_roi_analysis: true
+      
+    technical_report:
+      enabled: true  
+      template: "./templates/technical_report.html"
+      include_code_snippets: true
+      include_performance_metrics: true
+      
+    executive_dashboard:
+      enabled: true
+      template: "./templates/dashboard.html"
+      auto_refresh: false
+
+# System Configuration
+system:
+  logging:
+    level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+    file_logging: true
+    log_directory: "./logs"
+    max_log_size_mb: 100
+    backup_count: 5
+    
+  monitoring:
+    resource_monitoring: true
+    performance_tracking: true
+    error_tracking: true
+    metrics_collection: true
+    
+  security:
+    data_encryption: false  # Enable in production
+    access_logging: true
+    audit_trail: true
+    
+  notifications:
+    enabled: true
+    email_notifications: false
+    slack_notifications: false
+    completion_notifications: true
+    error_notifications: true
+
+# Environment-specific Overrides
+environments:
+  development:
+    data_capture:
+      storage:
+        max_storage_gb: 10
+    model_training:
+      ultralytics:
+        training_params:
+          epochs: 20
+          batch_size: 8
+    system:
+      logging:
+        level: "DEBUG"
+        
+  testing:
+    data_capture:
+      session:
+        capture_batch_size: 10
+    model_training:
+      ultralytics:
+        training_params:
+          epochs: 5
+          batch_size: 4
+          
+  production:
+    cvat_integration:
+      server:
+        admin_password: "${CVAT_ADMIN_PASSWORD}"
+    system:
+      security:
+        data_encryption: true
+      logging:
+        level: "WARNING"
