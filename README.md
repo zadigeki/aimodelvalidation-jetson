@@ -15,7 +15,9 @@ This PoC validates the feasibility of an AI model validation pipeline integratin
 - **Local annotation** with CVAT
 - **Data validation** using Deepchecks
 - **Model training** with Ultralytics YOLO
+- **Video/Image validation** with Roboflow Supervision
 - **Comprehensive testing** with TDD London School methodology
+- **Interactive frontend** with React TypeScript
 
 ## 📊 System Architecture
 
@@ -29,23 +31,37 @@ graph TB
         E --> F[Validation Reports]
     end
     
+    subgraph "Supervision Integration"
+        G[Video/Image Upload] --> H[Roboflow Supervision]
+        H --> I[Object Detection & Tracking]
+        I --> J[Quality Assessment]
+        J --> K[Export Results]
+    end
+    
+    subgraph "Frontend Interface"
+        L[React TypeScript UI] --> M[Drag & Drop Upload]
+        M --> N[Real-time Progress]
+        N --> O[Interactive Results]
+        O --> P[Export Options]
+    end
+    
     subgraph "Testing Layer (London School TDD)"
-        G[Acceptance Tests] --> H[Contract Tests]
-        H --> I[Unit Tests]
-        I --> J[Integration Tests]
+        Q[Acceptance Tests] --> R[Contract Tests]
+        R --> S[Unit Tests]
+        S --> T[Integration Tests]
     end
     
     subgraph "SPARC Methodology"
-        K[Specification] --> L[Pseudocode]
-        L --> M[Architecture]
-        M --> N[Refinement]
-        N --> O[Completion]
+        U[Specification] --> V[Pseudocode]
+        V --> W[Architecture]
+        W --> X[Refinement]
+        X --> Y[Completion]
     end
     
-    A -.-> G
-    B -.-> H
-    C -.-> I
-    D -.-> J
+    A -.-> Q
+    G -.-> R
+    L -.-> S
+    H -.-> T
 ```
 
 ## 🏗️ High-Level Architecture
@@ -152,7 +168,19 @@ aimodelvalidation/
 │   ├── 📁 interfaces/               # Service contracts and protocols
 │   ├── 📁 services/                 # Core business logic services
 │   ├── 📁 common/                   # Shared utilities and base classes
+│   ├── 📁 supervision_integration/   # NEW: Roboflow Supervision integration
+│   │   ├── 📁 services/             # Supervision validation services
+│   │   ├── 📁 models/               # Data models and schemas
+│   │   ├── 📁 api/                  # FastAPI routes and WebSocket handlers
+│   │   └── 📄 main.py               # FastAPI application entry point
 │   └── 📄 container.py              # Dependency injection container
+│
+├── 📁 frontend/                     # NEW: Frontend applications
+│   └── 📁 supervision-ui/           # React TypeScript UI for Supervision
+│       ├── 📁 src/components/       # React components
+│       ├── 📁 src/services/         # API and WebSocket clients
+│       ├── 📁 src/types/            # TypeScript definitions
+│       └── 📄 package.json          # Frontend dependencies
 │
 ├── 📁 tests/                        # Test suite (London School TDD)
 │   ├── 📁 acceptance/               # Outside-in acceptance tests
@@ -165,22 +193,68 @@ aimodelvalidation/
 │   ├── 📄 architecture.md           # System architecture design
 │   ├── 📄 test-architecture.md      # TDD testing framework
 │   ├── 📄 PSEUDOCODE_DESIGN.md      # Algorithm pseudocode design
+│   ├── 📄 SUPERVISION_INTEGRATION.md # NEW: Supervision integration guide
 │   └── 📄 PRODUCTION_VALIDATION_REPORT.md # Final validation results
 │
 ├── 📁 config/                       # Configuration files
 │   └── 📄 pipeline_config.yaml      # Pipeline configuration schema
 │
-├── 📄 requirements.txt              # Python dependencies (60+ packages)
+├── 📄 requirements.txt              # Python dependencies (196+ packages)
 ├── 📄 package.json                  # Node.js dependencies and scripts
-├── 📄 .gitignore                    # Comprehensive security protection
-├── 📄 .env.example                  # Environment configuration template
+├── 📄 .gitignore                    # Comprehensive security protection (612 lines)
+├── 📄 .env.example                  # Environment configuration template (238 lines)
 ├── 📄 SPECIFICATIONS.md             # Complete project specifications
 ├── 📄 TDD-LONDON-SETUP.md          # TDD setup documentation
 ├── 📄 CLAUDE.md                     # SPARC+TDD methodology guide
 ├── 📄 demo.py                       # Python interactive demo
 ├── 📄 demo.js                       # JavaScript TDD demo
+├── 📄 supervision_demo.py           # NEW: Comprehensive Supervision demo
+├── 📄 quick_supervision_demo.py     # NEW: Quick Supervision demo
 └── 📄 DEMO_GUIDE.md                 # Demo documentation and guide
 ```
+
+## 🚀 New: Roboflow Supervision Integration
+
+### Video & Image Validation Platform
+
+We've integrated [Roboflow Supervision](https://github.com/roboflow/supervision) to provide advanced computer vision capabilities:
+
+#### ✨ Key Features
+- **🎬 Video Processing**: Frame-by-frame analysis with object tracking
+- **🖼️ Image Detection**: Advanced object detection with YOLOv8
+- **📊 Real-time Analytics**: Live progress tracking via WebSocket
+- **🎨 Interactive UI**: Modern React TypeScript frontend
+- **📤 Multiple Export Formats**: JSON, CSV, XML export options
+- **🔄 Seamless Integration**: Works with existing Deepchecks pipeline
+
+#### 🚀 Quick Demo
+```bash
+# Run the interactive demo
+python supervision_demo.py
+
+# Or run quick demo
+python quick_supervision_demo.py
+```
+
+#### 🌐 Start the Full Application
+```bash
+# Backend (Terminal 1)
+cd src/supervision_integration
+uvicorn main:app --reload
+
+# Frontend (Terminal 2)  
+cd frontend/supervision-ui
+npm install && npm run dev
+
+# Open browser: http://localhost:3000
+```
+
+#### 📖 Documentation
+- [Complete Integration Guide](./docs/SUPERVISION_INTEGRATION.md)
+- [API Documentation](http://localhost:8000/docs) (when running)
+- [Frontend Components](./frontend/supervision-ui/README.md)
+
+---
 
 ## 🛠️ Quick Start Guide
 

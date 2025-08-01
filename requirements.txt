@@ -167,6 +167,15 @@ python-jose>=3.3.0              # JSON Web Token implementation
 passlib>=1.7.4                  # Password hashing utilities
 
 # ==============================================================================
+# SUPERVISION INTEGRATION
+# ==============================================================================
+
+# Supervision library for computer vision
+supervision>=0.15.0              # Computer vision utilities and annotations
+torch>=2.0.0                     # Required for model inference
+torchvision>=0.15.0              # Computer vision models and transforms
+
+# ==============================================================================
 # OPTIONAL: JUPYTER & NOTEBOOK SUPPORT
 # ==============================================================================
 
