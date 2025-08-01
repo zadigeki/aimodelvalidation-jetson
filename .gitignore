@@ -223,6 +223,7 @@ monitoring_*.json
 
 # Virtual environments (CRITICAL - never commit venv)
 venv/
+venv_*/
 env/
 ENV/
 .venv/

@@ -11,8 +11,17 @@ import uvicorn
 from pathlib import Path
 
 # Import routers
-from .api.supervision_endpoints import create_supervision_router
-from .api.driver_monitoring_endpoints import create_driver_monitoring_router
+try:
+    from .api.supervision_endpoints import create_supervision_router
+    from .api.driver_monitoring_endpoints import create_driver_monitoring_router
+except ImportError:
+    # Handle direct execution
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).parent.parent.parent))
+    
+    from src.supervision_integration.api.supervision_endpoints import create_supervision_router
+    from src.supervision_integration.api.driver_monitoring_endpoints import create_driver_monitoring_router
 
 # Configure logging
 logging.basicConfig(
