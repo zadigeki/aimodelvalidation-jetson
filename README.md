@@ -10,11 +10,12 @@
 [![Real Services](https://img.shields.io/badge/Real%20Services-Integrated%20✓-brightgreen.svg)](./src/services/real_services.py)
 [![Status](https://img.shields.io/badge/Status-Complete%20✓-success.svg)](#-complete-success-ai-model-validation-pipeline)
 
-This repository contains **TWO distinct AI model validation applications**:
+This repository contains **THREE distinct AI validation applications**:
 
 ## 📑 Table of Contents
 - [Application 1: SPARC+TDD Pipeline](#-application-1-sparctdd-pipeline-original-poc)
 - [Application 2: Roboflow Supervision](#-application-2-roboflow-supervision-integration-production-ready)
+- [Application 3: In-Cab Driver Behavior Detection](#-application-3-in-cab-driver-behavior-detection-fleet-safety)
 - [Which Application to Use?](#-which-application-should-you-use)
 - [Understanding Your Results - Application 1](#-understanding-your-results---application-1-sparctdd-pipeline)
 - [Quick Start Guide](#-quick-start-guide)
@@ -32,13 +33,30 @@ A **fully functional, production-ready** AI validation system using Roboflow Sup
 
 **➡️ [Click here for Roboflow Supervision Application Documentation](./Supervision-README.md)**
 
+## 🚗 Application 3: In-Cab Driver Behavior Detection (Fleet Safety)
+A **comprehensive driver monitoring system** using advanced computer vision (MediaPipe + YOLO) to detect fatigue, distraction, and unsafe behaviors in real-time. Features annotated video playback, interactive dashboards, and professional reporting with visual validation.
+
+**➡️ [Click here for In-Cab Driver Behavior Detection Documentation](./In-Cab-Behaviour-Detection-README.md)**
+
 ---
 
 ## 🚦 Which Application Should You Use?
 
+### **Use the In-Cab Driver Behavior Detection System if you want:**
+- 🚗 **Fleet safety management** with driver monitoring
+- 🧠 **Advanced behavior analysis** (fatigue, distraction, yawning)
+- 📊 **Professional reporting** with PDF/CSV exports
+- 🎥 **Visual validation** with event thumbnails
+- 💼 **Enterprise-ready** system for fleet operations
+- 📈 **Safety scoring** and risk assessment
+
+**Quick Start:** `./start_complete_system.sh` → Open http://localhost:3000
+
+**Full Documentation:** [In-Cab-Behaviour-Detection-README.md](./In-Cab-Behaviour-Detection-README.md)
+
 ### **Use the Roboflow Supervision Application if you want:**
-- ✅ **Production-ready system** that works immediately
-- ✅ **Real AI object detection** with YOLO models
+- ✅ **General object detection** that works immediately
+- ✅ **Real AI models** with YOLO detection
 - ✅ **Web interface** with drag-and-drop file upload
 - ✅ **Live camera integration** for real-time detection
 - ✅ **Video annotation** with bounding boxes
@@ -69,9 +87,9 @@ python demo.py                     # Full simulation mode
 
 ---
 
-## 🎉 COMPLETE SUCCESS: Two Fully Functional AI Model Validation Systems
+## 🎉 COMPLETE SUCCESS: Three Fully Functional AI Validation Systems
 
-This repository contains **TWO fully functional AI model validation systems**, both production-ready:
+This repository contains **THREE fully functional AI validation systems**, all production-ready:
 
 ### 📚 **Application 1: SPARC+TDD Pipeline (NOW WITH REAL CAMERA!)**
 ✅ **Complete SPARC methodology** implementation with all 5 phases  
