@@ -85,8 +85,10 @@ The In-Cab Driver Behavior Detection System is an advanced AI-powered solution d
 ### **Component Stack:**
 - **Frontend**: React 18, Vite, Tailwind CSS, Chart.js, jsPDF
 - **Backend**: Python FastAPI, MediaPipe, YOLO (Ultralytics), OpenCV
-- **AI Models**: MediaPipe Face Mesh, YOLOv8n for object detection
-- **Storage**: Temporary thumbnail storage with REST API serving
+- **AI Models**: MediaPipe Face Mesh (Google), YOLOv8n (Ultralytics) 
+- **Storage**: System temporary directory with automatic video cleanup
+- **Thumbnails**: Persistent thumbnail storage with REST API serving
+- **Note**: Roboflow Supervision installed but not actively used
 
 ---
 
@@ -224,6 +226,13 @@ A:
 
 ### **Technical Questions**
 
+**Q: Which AI models are actually being used in the system?**
+A: The system uses two primary AI models:
+1. **MediaPipe Face Mesh (Google)**: For all facial analysis including EAR, MAR, and head pose
+2. **YOLOv8n (Ultralytics)**: For object detection (phones, persons)
+
+**Important Note**: While Roboflow Supervision is installed (supervision==0.26.1), it is NOT currently used in the codebase. It's imported but no supervision functions are called.
+
 **Q: Why are timestamps sometimes incorrect in the reports?**
 A: Early versions had timestamp calculation issues that have been resolved. The system now uses proper frame-based calculations: `timestamp = frame_number / fps` with MM:SS.D format for accurate event timing.
 
@@ -243,6 +252,27 @@ A: Each detected event automatically generates a 200x150 pixel thumbnail showing
 - Distraction: Head position when looking away from road
 - Phone Usage: Visible mobile device in frame
 
+**Q: Are you using any models from the Roboflow Supervision repository?**
+A: **No**. While Roboflow Supervision is installed as a dependency (supervision==0.26.1), the system does not use any models or functionality from the Roboflow Supervision repository. 
+
+**Current AI Stack:**
+- **Google's MediaPipe**: All facial analysis (EAR, MAR, head pose)
+- **Ultralytics' YOLOv8n**: Object detection (phones, persons)
+- **Custom Algorithms**: Behavior analysis, safety scoring, event classification
+
+**Roboflow Supervision Status:**
+- **Installed**: ✅ Yes (in requirements_driver_monitoring.txt)
+- **Imported**: ✅ Yes (`import supervision as sv`)
+- **Used**: ❌ No (zero `sv.` function calls in codebase)
+- **Impact**: Supervision is essentially dead code in current implementation
+
+**Future Enhancement Opportunities:**  
+Supervision could be leveraged for:
+- Advanced bounding box annotations
+- Object tracking across video frames
+- Enhanced detection post-processing
+- Advanced visualization and metrics
+
 ### **Performance & Processing Questions**
 
 **Q: How long does video analysis take?**
@@ -257,6 +287,37 @@ A: The current system is designed for post-analysis of recorded footage. Real-ti
 
 **Q: What happens if the AI backend crashes during analysis?**
 A: The system includes error recovery mechanisms. If analysis fails, you'll receive clear error messages. The frontend gracefully handles backend disconnections and provides retry options.
+
+### **File Storage & Data Management Questions**
+
+**Q: Where exactly are uploaded videos and analysis results stored?**
+A: The system uses a privacy-focused temporary storage approach:
+
+**Uploaded Videos:**
+- **Location**: System temporary directory (e.g., `/var/folders/.../T/`)
+- **Lifecycle**: Automatically deleted immediately after analysis
+- **Privacy**: No permanent video storage, processed locally only
+
+**Event Thumbnails:**
+- **Location**: `/var/folders/.../T/driver_monitoring_thumbnails_{random_id}/`
+- **Format**: JPEG files (200×150px, ~14KB each)
+- **Naming**: `event_{event_id}.jpg` (e.g., `event_distraction_1014.jpg`)
+- **Retention**: Persist for visual validation until manual cleanup
+- **API Access**: `GET /api/driver-monitoring/thumbnail/{event_id}`
+
+**Analysis Results:**
+- **Storage**: In-memory during processing, not persisted to disk
+- **Output**: JSON responses sent directly to frontend
+- **Export**: Users can save PDF/CSV reports locally
+
+**Cleanup Commands:**
+```bash
+# Remove all thumbnail directories
+rm -rf /var/folders/.../T/driver_monitoring_thumbnails_*
+
+# Check current thumbnail storage
+ls -la /var/folders/.../T/ | grep driver_monitoring
+```
 
 ### **Integration & Deployment Questions**
 
@@ -277,17 +338,35 @@ A: The system can be deployed using:
 **Q: What are the hardware requirements?**
 A: Minimum requirements:
 - **CPU**: Multi-core processor (4+ cores recommended)
-- **RAM**: 8GB minimum (16GB recommended for large videos)
+- **RAM**: 8GB minimum (16GB recommended for large videos) 
 - **GPU**: Optional but recommended for faster processing
 - **Storage**: 10GB free space for temporary files and thumbnails
+- **Disk Space**: ~2.4MB per analysis session for thumbnails (170+ events × 14KB each)
+- **Temp Directory**: Sufficient space in system temp directory for video processing
 
 ### **Data & Privacy Questions**
 
 **Q: Where is the video data stored?**
-A: All processing is performed locally. Videos are temporarily stored during analysis and can be automatically deleted afterward. No data is sent to external servers unless explicitly configured.
+A: All processing is performed locally with automatic cleanup:
+- **Uploaded Videos**: Temporarily stored in system temp directory (`/var/folders/.../T/`)
+- **Processing**: Videos are analyzed in-memory and on local disk
+- **Automatic Cleanup**: Original videos are automatically deleted after analysis completes
+- **Privacy**: No data is sent to external servers unless explicitly configured
+
+**Q: Where are event thumbnails stored?**
+A: Event thumbnails are organized in temporary directories:
+- **Location**: `/var/folders/.../T/driver_monitoring_thumbnails_{random_id}/`
+- **Format**: JPEG files named `event_{event_id}.jpg` (200×150 pixels, ~14KB each)
+- **Example Path**: `/var/folders/hd/w1vx6rbx6p7100qwd6dlrrq80000gn/T/driver_monitoring_thumbnails_tmpdt08zuxx/`
+- **Retention**: Persist until manual cleanup or system temp cleanup
+- **API Access**: Served via REST endpoint `/api/driver-monitoring/thumbnail/{event_id}`
 
 **Q: How long are thumbnails retained?**
-A: Event thumbnails are stored in temporary directories and can be cleaned up after analysis. The system provides configurable retention policies for compliance with data governance requirements.
+A: Event thumbnails persist in temporary directories after analysis:
+- **Automatic Cleanup**: Not automatically deleted (unlike videos)
+- **Manual Cleanup**: Can be removed using `rm -rf /var/folders/.../T/driver_monitoring_thumbnails_*`
+- **Purpose**: Retained for visual validation and report generation
+- **Storage Impact**: ~14KB per event (170+ events = ~2.4MB per analysis session)
 
 **Q: Can I customize the detection parameters?**
 A: Yes, the system supports configurable parameters:
@@ -320,21 +399,51 @@ Scores above 80% indicate good performance, 60-80% moderate risk, below 60% high
 ## 🔧 Technical Specifications
 
 ### **AI Models & Algorithms**
-- **MediaPipe Face Mesh**: 468 3D facial landmarks
-- **YOLOv8n**: Real-time object detection model
-- **Eye Aspect Ratio (EAR)**: Drowsiness detection algorithm
-- **Mouth Aspect Ratio (MAR)**: Yawn detection algorithm
-- **Head Pose Estimation**: 3D head orientation analysis
+- **MediaPipe Face Mesh (Google)**: 468 3D facial landmarks with refine_landmarks enabled
+- **YOLOv8n (Ultralytics)**: Real-time object detection model (~6.2MB)
+- **Eye Aspect Ratio (EAR)**: Drowsiness detection algorithm using MediaPipe landmarks
+- **Mouth Aspect Ratio (MAR)**: Yawn detection algorithm using MediaPipe landmarks
+- **Head Pose Estimation**: 3D head orientation analysis via MediaPipe
+
+### **Model Details & Sources**
+
+#### **Primary AI Models Currently Used:**
+1. **MediaPipe Face Mesh (Google)**
+   - **Source**: Google's MediaPipe library
+   - **Version**: 0.10.21
+   - **Configuration**: max_num_faces=1, refine_landmarks=True, min_detection_confidence=0.5
+   - **Purpose**: Primary facial analysis for EAR, MAR, and head pose estimation
+   - **Storage**: Installed with mediapipe package in virtual environment
+
+2. **YOLOv8n (Ultralytics)**
+   - **Source**: Ultralytics YOLO implementation
+   - **Model File**: `yolov8n.pt` (auto-downloaded on first run)
+   - **Size**: ~6.2MB (smallest, fastest YOLO variant)
+   - **Purpose**: Object detection for phones and person detection
+   - **Storage**: `~/.cache/ultralytics/` or local download cache
+
+#### **Roboflow Supervision Status:**
+- **Installation Status**: ✅ Installed (supervision==0.26.1)
+- **Usage Status**: ❌ **NOT CURRENTLY USED**
+- **Note**: Supervision is imported but no supervision functions are called in the codebase
+- **Potential**: Available for future enhancements (advanced annotations, tracking, metrics)
+
+#### **Custom Algorithms:**
+- **Event Classification**: Custom rule-based logic for behavior analysis
+- **Safety Scoring**: Proprietary scoring algorithms for risk assessment
+- **Thumbnail Extraction**: Custom OpenCV-based frame capture system
 
 ### **Processing Pipeline**
-1. **Video Ingestion**: Multi-format support with validation
-2. **Frame Extraction**: Process every 3rd frame for optimal performance
-3. **Face Detection**: MediaPipe facial landmark identification
-4. **Feature Analysis**: EAR, MAR, and head pose calculations
-5. **Object Detection**: YOLO-based phone and object recognition
-6. **Event Classification**: Rule-based event identification and scoring
-7. **Thumbnail Generation**: Automatic frame capture for visual validation
-8. **Results Compilation**: JSON response with comprehensive metrics
+1. **Video Upload**: Temporary storage in system temp directory
+2. **Video Ingestion**: Multi-format support with validation
+3. **Frame Extraction**: Process every 3rd frame for optimal performance
+4. **Face Detection**: MediaPipe Face Mesh with 468 landmarks
+5. **Feature Analysis**: EAR, MAR, and head pose calculations using MediaPipe
+6. **Object Detection**: YOLOv8n-based phone and person recognition
+7. **Event Classification**: Custom rule-based event identification and scoring
+8. **Thumbnail Generation**: Automatic 200×150px JPEG frame capture with unique event IDs
+9. **Results Compilation**: JSON response with comprehensive metrics
+10. **Cleanup**: Automatic deletion of original video file (thumbnails retained)
 
 ### **Performance Metrics**
 - **Processing Speed**: ~3-5x real-time (30fps video processed at 100-150fps)
