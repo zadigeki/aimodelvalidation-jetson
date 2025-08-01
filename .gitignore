@@ -171,6 +171,15 @@ labels.jpg
 *_batch*.jpg
 args.yaml
 
+# YOLO cache and temporary files
+*.cache
+labels.cache
+**/labels.cache
+train.cache
+val.cache
+**/train.cache
+**/val.cache
+
 # =============================================================================
 # CVAT & ANNOTATION DATA
 # =============================================================================
@@ -452,6 +461,15 @@ ultralytics_cache/
 **/.matplotlib/
 **/tensorboard_logs/
 **/tb_logs/
+
+# General ML cache patterns
+*.cache
+**/*.cache
+.cache/
+cache/
+**/cache/
+*.lock
+**/*.lock
 
 # =============================================================================
 # OPERATING SYSTEM FILES
