@@ -137,6 +137,13 @@ graph LR
 | **Model Training Service** | ✅ Complete | Ultralytics YOLO integration with training pipeline |
 | **Dependency Injection Container** | ✅ Complete | IoC container with mock-friendly design |
 
+### ✅ **Interactive Demo Applications (100%)**
+
+- **✅ Python Demo (`demo.py`)**: Full workflow simulation with visual feedback
+- **✅ JavaScript Demo (`demo.js`)**: Showcases London School TDD implementation
+- **✅ Mock Services**: Complete simulation of CVAT, Deepchecks, and Ultralytics
+- **✅ Demo Guide**: Comprehensive documentation in [DEMO_GUIDE.md](./DEMO_GUIDE.md)
+
 ## 📂 Project Structure
 
 ```
@@ -169,7 +176,10 @@ aimodelvalidation/
 ├── 📄 .env.example                  # Environment configuration template
 ├── 📄 SPECIFICATIONS.md             # Complete project specifications
 ├── 📄 TDD-LONDON-SETUP.md          # TDD setup documentation
-└── 📄 CLAUDE.md                     # SPARC+TDD methodology guide
+├── 📄 CLAUDE.md                     # SPARC+TDD methodology guide
+├── 📄 demo.py                       # Python interactive demo
+├── 📄 demo.js                       # JavaScript TDD demo
+└── 📄 DEMO_GUIDE.md                 # Demo documentation and guide
 ```
 
 ## 🛠️ Quick Start Guide
@@ -222,6 +232,52 @@ npm run sparc:complete      # Completion phase
 # London School TDD patterns
 npm run test:london         # London School behavior patterns
 npm run test:mock-verify    # Mock interaction verification
+```
+
+### 4. **Run Interactive Demos**
+
+```bash
+# Python demo - Full workflow simulation
+python3 demo.py
+
+# JavaScript demo - TDD implementation showcase
+node demo.js
+
+# Demo outputs are saved to ./demo_data/
+```
+
+## 🎮 Interactive Demo Applications
+
+### **Simulated Workflow Demo**
+
+Since this PoC is developed in a cloud environment without camera access, we provide interactive demos that simulate the complete workflow:
+
+#### **Python Demo (`demo.py`)**
+```bash
+python3 demo.py
+```
+- **Interactive Configuration**: Choose frames to capture, training epochs, project name
+- **Simulated Camera**: Creates mock images with OpenCV (if available) or text files
+- **Complete Workflow**: Shows all phases from capture to training
+- **Visual Feedback**: Progress indicators and validation scores
+- **Generated Files**: Saves outputs to `./demo_data/` directory
+
+#### **JavaScript Demo (`demo.js`)**
+```bash
+node demo.js
+```
+- **TDD Showcase**: Demonstrates London School TDD implementation
+- **Mock Services**: Shows how dependency injection works
+- **Service Collaboration**: Validates the architecture design
+- **Behavior Verification**: Confirms mock-first development approach
+
+### **Demo Output Structure**
+```
+demo_data/
+├── captured_images/     # Simulated camera frames
+├── annotations/         # Mock CVAT annotations
+├── validation_reports/  # Deepchecks quality reports
+└── models/             # Trained model metadata
 ```
 
 ## 🎯 What Remains To Complete
@@ -305,8 +361,80 @@ npm run test:london         # London School pattern validation
 - **[SPECIFICATIONS.md](./SPECIFICATIONS.md)**: Complete project requirements and acceptance criteria
 - **[CLAUDE.md](./CLAUDE.md)**: SPARC+TDD methodology and development workflow
 - **[TDD-LONDON-SETUP.md](./TDD-LONDON-SETUP.md)**: London School TDD setup and examples
+- **[DEMO_GUIDE.md](./DEMO_GUIDE.md)**: Interactive demo documentation and usage guide
 - **[docs/architecture.md](./docs/architecture.md)**: System architecture and design patterns
 - **[docs/test-architecture.md](./docs/test-architecture.md)**: Testing framework and strategies
+
+## 📷 Testing with Real Camera
+
+### **Prerequisites for Real Camera Testing**
+
+1. **Physical Camera Access**: USB webcam or built-in camera
+2. **Permissions**: Camera access permissions for your application
+3. **Local Environment**: Not available in cloud environments (Codespaces, etc.)
+
+### **Real Camera Implementation**
+
+To test with a real camera, modify the `WebcamCaptureService`:
+
+```python
+# Real camera implementation example
+import cv2
+
+class RealWebcamCaptureService:
+    def __init__(self, camera_index=0):
+        self.cap = cv2.VideoCapture(camera_index)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+    
+    def capture_frame(self):
+        ret, frame = self.cap.read()
+        if ret:
+            # Save real frame
+            filename = f"frame_{timestamp}.jpg"
+            cv2.imwrite(filename, frame)
+            return {'filename': filename, 'frame': frame}
+        else:
+            raise Exception("Failed to capture frame")
+    
+    def release(self):
+        self.cap.release()
+```
+
+### **Environment Configuration for Real Services**
+
+Update `.env` file for real implementations:
+
+```bash
+# Real CVAT server
+CVAT_HOST=your-cvat-server.com
+CVAT_API_TOKEN=your-real-token
+
+# Real camera settings
+WEBCAM_DEVICE_ID=0  # or 1, 2 for multiple cameras
+WEBCAM_RESOLUTION_WIDTH=1920
+WEBCAM_RESOLUTION_HEIGHT=1080
+
+# Enable real services
+MOCK_CVAT_API=false
+MOCK_EXTERNAL_SERVICES=false
+```
+
+### **Testing Workflow**
+
+1. **With Simulated Data** (Cloud/Codespaces):
+   ```bash
+   python3 demo.py  # Uses mock camera and services
+   ```
+
+2. **With Real Camera** (Local machine):
+   ```bash
+   # Set environment to use real services
+   export MOCK_EXTERNAL_SERVICES=false
+   
+   # Run with real camera
+   python3 demo_real_camera.py  # You would create this
+   ```
 
 ## 🚀 Deployment
 
@@ -381,7 +509,14 @@ This **AI Model Validation PoC** successfully demonstrates:
 ✅ **Production-ready architecture** with dependency injection  
 ✅ **Comprehensive testing strategy** with 84%+ coverage  
 ✅ **Tool integration framework** ready for CVAT, Deepchecks, Ultralytics  
+✅ **Interactive demos** showcasing the complete workflow with simulated data  
 
 **The foundation is complete and ready for real service integration!** 🚀
+
+### **Try the Demo Now:**
+```bash
+# Experience the complete AI model validation workflow
+python3 demo.py
+```
 
 Next step: Replace mocks with actual service implementations to create a fully functional AI model validation pipeline.
