@@ -1,5 +1,21 @@
-# AI Model Validation - Dual Application Suite
+# Merge Conflict Resolution Guide
 
+## Overview
+You have merge conflicts in README.md between your feature branch (roboflow-supervision-integration) and main branch. The main branch added real camera support to Application 1, while your feature branch added the Roboflow Supervision application (Application 2).
+
+## Resolution Strategy
+We want to KEEP BOTH improvements:
+1. ✅ Keep the real camera updates from main branch for Application 1
+2. ✅ Keep the Roboflow Supervision application from feature branch
+3. ✅ Merge the badges to show both applications' capabilities
+4. ✅ Update the summary to highlight both applications
+
+## Step-by-Step Resolution
+
+### 1. First Conflict - Badges Section
+Replace the conflicted badges section with this merged version:
+
+```markdown
 [![SPARC Methodology](https://img.shields.io/badge/Methodology-SPARC-blue.svg)](https://github.com/ruvnet/claude-code-flow/docs/sparc.md)
 [![TDD London School](https://img.shields.io/badge/TDD-London%20School-green.svg)](./TDD-LONDON-SETUP.md)
 [![Test Coverage](https://img.shields.io/badge/Coverage-84%25-brightgreen.svg)](./coverage)
@@ -9,69 +25,21 @@
 [![Real Camera](https://img.shields.io/badge/Real%20Camera-Tested%20✓-brightgreen.svg)](./demo_real_integrated_simple.py)
 [![Real Services](https://img.shields.io/badge/Real%20Services-Integrated%20✓-brightgreen.svg)](./src/services/real_services.py)
 [![Status](https://img.shields.io/badge/Status-Complete%20✓-success.svg)](#-complete-success-ai-model-validation-pipeline)
-
-This repository contains **TWO distinct AI model validation applications**:
-
-## 📑 Table of Contents
-- [Application 1: SPARC+TDD Pipeline](#-application-1-sparctdd-pipeline-original-poc)
-- [Application 2: Roboflow Supervision](#-application-2-roboflow-supervision-integration-production-ready)
-- [Which Application to Use?](#-which-application-should-you-use)
-- [Quick Start Guide](#-quick-start-guide)
-- [Full Documentation](#-documentation)
-
----
-
-## 🎯 Application 1: SPARC+TDD Pipeline (Original PoC) - NOW WITH REAL CAMERA!
-A comprehensive **Proof of Concept** for AI model validation using **SPARC methodology** with **London School TDD** principles. Demonstrates end-to-end validation through data capture, annotation, validation, and training workflows.
-
-**🎉 BREAKTHROUGH UPDATE**: Complete AI pipeline validated with real laptop camera integration!
-
-## 🤖 Application 2: Roboflow Supervision Integration (Production Ready)
-A **fully functional, production-ready** AI validation system using Roboflow Supervision with real YOLO models for object detection on videos and images. 
-
-**➡️ [Click here for Roboflow Supervision Application Documentation](./Supervision-README.md)**
-
----
-
-## 🚦 Which Application Should You Use?
-
-### **Use the Roboflow Supervision Application if you want:**
-- ✅ **Production-ready system** that works immediately
-- ✅ **Real AI object detection** with YOLO models
-- ✅ **Web interface** with drag-and-drop file upload
-- ✅ **Live camera integration** for real-time detection
-- ✅ **Video annotation** with bounding boxes
-- ✅ **Automatic cleanup** to manage disk space
-
-**Quick Start:** `python simple_api.py` → Open http://localhost:8000
-
-**Full Documentation:** [Supervision-README.md](./Supervision-README.md)
-
-### **Use the SPARC+TDD Pipeline if you want:**
-- 📚 **Learning example** of SPARC methodology
-- 🧪 **TDD London School** implementation patterns
-- 🏗️ **Architecture reference** for building AI pipelines
-- 🔧 **Mock-driven development** examples
-- 📊 **Comprehensive test coverage** patterns
-- 🎥 **NEW: Real camera integration** with actual webcam capture
-
-**Quick Start Options:**
-```bash
-# ⭐ RECOMMENDED: Complete real service integration
-python demo_real_integrated_simple.py
-
-# Alternative options:
-python test_camera.py              # Test camera access
-python demo_real_camera.py         # Camera + mock services  
-python demo.py                     # Full simulation mode
 ```
 
----
+### 2. Second Conflict - Summary Title
+Replace the conflicted summary section with:
 
+```markdown
 ## 🎉 COMPLETE SUCCESS: Two Fully Functional AI Model Validation Systems
 
 This repository contains **TWO fully functional AI model validation systems**, both production-ready:
+```
 
+### 3. Third Conflict - Application Details
+Replace the entire conflicted section with this comprehensive version:
+
+```markdown
 ### 📚 **Application 1: SPARC+TDD Pipeline (NOW WITH REAL CAMERA!)**
 ✅ **Complete SPARC methodology** implementation with all 5 phases  
 ✅ **London School TDD environment** with mock-first development  
@@ -85,11 +53,13 @@ This repository contains **TWO fully functional AI model validation systems**, b
 
 **Try it:** 
 ```bash
-# Real camera + services
+# ⭐ RECOMMENDED: Complete real service integration
 python demo_real_integrated_simple.py
 
-# Simulation mode
-python demo.py
+# Alternative options:
+python test_camera.py              # Test camera access
+python demo_real_camera.py         # Camera + mock services  
+python demo.py                     # Full simulation mode
 ```
 
 ### 🚀 **Application 2: Roboflow Supervision (Production Ready)**
@@ -117,3 +87,35 @@ python demo.py
 - **Teaching software architecture?** → Reference Application 1
 
 **Both applications are complete, tested, and ready for production use!** 🚀
+```
+
+## Git Commands to Apply Resolution
+
+1. **Start the merge resolution:**
+   ```bash
+   git checkout feature/roboflow-supervision-integration
+   git merge main
+   ```
+
+2. **Edit README.md** and apply the changes above
+
+3. **Mark as resolved and commit:**
+   ```bash
+   git add README.md
+   git commit -m "Merge main into feature branch - keep both real camera and Roboflow Supervision improvements"
+   ```
+
+4. **Push the resolved branch:**
+   ```bash
+   git push origin feature/roboflow-supervision-integration
+   ```
+
+## Result
+The merged README.md will showcase:
+- ✅ Both applications with their full capabilities
+- ✅ Real camera support for Application 1 (from main)
+- ✅ Roboflow Supervision as Application 2 (from feature)
+- ✅ All badges showing the complete feature set
+- ✅ Clear guidance on which application to use
+
+Both improvements are preserved and the repository now clearly shows it contains two complete, production-ready AI validation systems.

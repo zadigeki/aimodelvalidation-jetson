@@ -129,6 +129,8 @@ kombu>=5.3.0                    # Messaging library
 tqdm>=4.66.0                    # Progress bars
 rich>=13.5.0                    # Rich text and beautiful formatting
 typer>=0.9.0                    # CLI applications with type hints
+websockets>=11.0.0              # WebSocket client and server
+python-multipart>=0.0.6        # Multipart form data parsing
 pathlib                         # Object-oriented filesystem paths (built-in)
 datetime                        # Date and time handling (built-in)
 json                            # JSON encoder/decoder (built-in)
@@ -167,6 +169,16 @@ python-jose>=3.3.0              # JSON Web Token implementation
 passlib>=1.7.4                  # Password hashing utilities
 
 # ==============================================================================
+# SUPERVISION INTEGRATION
+# ==============================================================================
+
+# Supervision library for computer vision
+supervision>=0.15.0              # Computer vision utilities and annotations
+roboflow>=1.1.0                  # Roboflow dataset management and integration
+torch>=2.0.0                     # Required for model inference
+torchvision>=0.15.0              # Computer vision models and transforms
+
+# ==============================================================================
 # OPTIONAL: JUPYTER & NOTEBOOK SUPPORT
 # ==============================================================================
 
@@ -187,11 +199,30 @@ notebook>=7.0.0                 # Jupyter notebook server
 # INSTALLATION NOTES
 # ==============================================================================
 
-# Installation Commands:
-# pip install -r requirements.txt
-# 
-# For development with all optional dependencies:
-# pip install -r requirements.txt -r requirements-dev.txt
+# Quick Start Instructions:
+# 1. Create a virtual environment:
+#    python -m venv venv
+#    source venv/bin/activate  # On Windows: venv\Scripts\activate
 #
-# For production (minimal dependencies):
-# pip install -r requirements-prod.txt
+# 2. Install all dependencies:
+#    pip install -r requirements.txt
+#
+# 3. Run the main API:
+#    python run_api.py
+#
+# 4. Access the application:
+#    - API Documentation: http://localhost:8000/docs
+#    - Health Check: http://localhost:8000/api/health
+#    - Supervision API: http://localhost:8000/api/supervision/
+#
+# 5. Run camera demo:
+#    python demo_camera_supervision.py
+#
+# Additional Installation Options:
+# - For development with all optional dependencies:
+#   pip install -r requirements.txt -r requirements-dev.txt
+# - For production (minimal dependencies):
+#   pip install -r requirements-prod.txt
+#
+# Note: Training data, models, and large files are excluded from Git.
+# The application will create necessary directories automatically.

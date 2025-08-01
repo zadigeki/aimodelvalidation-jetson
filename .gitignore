@@ -57,6 +57,18 @@ authorized_keys
 **/images/
 **/videos/
 **/media/
+
+# Project-specific training data directories
+demo_data/
+camera_test_output/
+runs/
+**/supervision_uploads/
+**/captured_images/
+**/real_annotations/
+**/real_integrated/
+**/real_models/
+**/real_validation/
+**/yolo_dataset/
 *.jpg
 *.jpeg
 *.png
@@ -188,6 +200,13 @@ monitoring_*.json
 # PYTHON SPECIFIC
 # =============================================================================
 
+# Virtual environments (CRITICAL - never commit venv)
+venv/
+env/
+ENV/
+.venv/
+.env/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -251,7 +270,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
-*.ipynb
+# *.ipynb  # Allow notebook files for documentation
 
 # IPython
 profile_default/
