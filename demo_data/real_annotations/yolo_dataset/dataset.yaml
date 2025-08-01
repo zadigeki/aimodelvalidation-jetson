@@ -1,0 +1,8 @@
+# YOLO Dataset Configuration
+path: /Users/mondweep/DxSure2/SPARC-Evolution/demo_data/real_annotations/yolo_dataset
+train: train/images
+val: train/images  # Using same for demo
+
+# Classes
+nc: 2
+names: ['person', 'object']
