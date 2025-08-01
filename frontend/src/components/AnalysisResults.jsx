@@ -265,7 +265,7 @@ const AnalysisResults = ({ results, onNext, onPrev }) => {
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-3">
                         <span className="text-2xl">{getEventTypeIcon(event.type, event.description)}</span>
-                        <div>
+                        <div className="flex-1">
                           <h4 className="font-semibold text-gray-900">{event.description}</h4>
                           <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600">
                             <div className="flex items-center space-x-1">
@@ -275,6 +275,21 @@ const AnalysisResults = ({ results, onNext, onPrev }) => {
                             <div>Frame: {event.frame_number}</div>
                             <div>Confidence: {(event.confidence * 100).toFixed(0)}%</div>
                           </div>
+                          
+                          {/* Event Thumbnail */}
+                          {event.event_id && (
+                            <div className="mt-3">
+                              <img
+                                src={`http://localhost:8002/api/driver-monitoring/thumbnail/${event.event_id}`}
+                                alt={`Event at ${formatTimestamp(event.timestamp)}`}
+                                className="w-32 h-24 object-cover rounded-lg border border-gray-300 shadow-sm"
+                                onError={(e) => {
+                                  e.target.style.display = 'none'
+                                }}
+                              />
+                              <p className="text-xs text-gray-500 mt-1">Frame at {formatTimestamp(event.timestamp)}</p>
+                            </div>
+                          )}
                         </div>
                       </div>
                       

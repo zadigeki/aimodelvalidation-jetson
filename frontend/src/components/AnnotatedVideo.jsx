@@ -271,7 +271,7 @@ const AnnotatedVideo = ({ originalVideo, analysisResults, onNext, onPrev }) => {
                       className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                       onClick={() => skipToEvent(index)}
                     >
-                      <div className="flex items-start space-x-2">
+                      <div className="flex items-start space-x-3">
                         <span className="text-lg">{getEventTypeIcon(event.type, event.description)}</span>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
@@ -288,6 +288,20 @@ const AnnotatedVideo = ({ originalVideo, analysisResults, onNext, onPrev }) => {
                             <span>•</span>
                             <span>{(event.confidence * 100).toFixed(0)}% confidence</span>
                           </div>
+                          
+                          {/* Event Thumbnail in Sidebar */}
+                          {event.event_id && (
+                            <div className="mt-2">
+                              <img
+                                src={`http://localhost:8002/api/driver-monitoring/thumbnail/${event.event_id}`}
+                                alt={`Event preview`}
+                                className="w-20 h-15 object-cover rounded border border-gray-300"
+                                onError={(e) => {
+                                  e.target.style.display = 'none'
+                                }}
+                              />
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

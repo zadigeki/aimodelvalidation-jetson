@@ -41,7 +41,8 @@ except ImportError as e:
 try:
     from fastapi import FastAPI, HTTPException, UploadFile, File, Form, BackgroundTasks
     from fastapi.middleware.cors import CORSMiddleware
-    from fastapi.responses import JSONResponse
+    from fastapi.responses import JSONResponse, FileResponse
+    from fastapi.staticfiles import StaticFiles
     import uvicorn
     from pydantic import BaseModel
     FASTAPI_AVAILABLE = True
@@ -123,6 +124,26 @@ class RealDriverAnalyzer:
         deciseconds = int((total_seconds % 1) * 10)
         return f"{minutes:02d}:{seconds:02d}.{deciseconds:01d}"
     
+    def save_event_thumbnail(self, frame, event_id, thumbnails_dir):
+        """Save a thumbnail image for an event"""
+        try:
+            # Create thumbnails directory if it doesn't exist
+            os.makedirs(thumbnails_dir, exist_ok=True)
+            
+            # Resize frame to thumbnail size (200x150 pixels)
+            thumbnail_height = 150
+            thumbnail_width = 200
+            thumbnail = cv2.resize(frame, (thumbnail_width, thumbnail_height))
+            
+            # Save thumbnail as JPEG
+            thumbnail_path = os.path.join(thumbnails_dir, f"event_{event_id}.jpg")
+            cv2.imwrite(thumbnail_path, thumbnail, [cv2.IMWRITE_JPEG_QUALITY, 85])
+            
+            return thumbnail_path
+        except Exception as e:
+            logger.error(f"Failed to save thumbnail for event {event_id}: {e}")
+            return None
+    
     def detect_head_pose(self, face_landmarks, img_width, img_height):
         """Detect head pose using MediaPipe landmarks"""
         # Key facial landmarks for pose estimation
@@ -180,6 +201,11 @@ class RealDriverAnalyzer:
     async def analyze_video(self, video_path: str, config: dict) -> dict:
         """Analyze video with real AI processing"""
         logger.info(f"🎬 Starting REAL AI analysis of: {video_path}")
+        
+        # Create thumbnails directory
+        video_name = os.path.splitext(os.path.basename(video_path))[0]
+        thumbnails_dir = os.path.join(tempfile.gettempdir(), f"driver_monitoring_thumbnails_{video_name}")
+        logger.info(f"📸 Thumbnails will be saved to: {thumbnails_dir}")
         
         # Reset counters
         self.frame_results = []
@@ -266,13 +292,18 @@ class RealDriverAnalyzer:
                         
                         # Add drowsiness event
                         if not any(e['type'] == 'fatigue' and abs(e['frame_number'] - frame_count) < fps for e in events_detected):
+                            event_id = f"fatigue_{frame_count}"
+                            thumbnail_path = self.save_event_thumbnail(frame, event_id, thumbnails_dir)
+                            
                             events_detected.append({
                                 'frame_number': frame_count,
                                 'timestamp': self.format_timestamp(frame_count, fps),
                                 'type': 'fatigue',
                                 'description': f'Extended eye closure detected (EAR: {avg_ear:.3f})',
                                 'confidence': min(0.95, (ear_threshold - avg_ear) / ear_threshold),
-                                'severity': 'high' if consecutive_closed_eyes > fps else 'medium'
+                                'severity': 'high' if consecutive_closed_eyes > fps else 'medium',
+                                'thumbnail_path': thumbnail_path,
+                                'event_id': event_id
                             })
                 else:
                     consecutive_closed_eyes = 0
@@ -291,13 +322,18 @@ class RealDriverAnalyzer:
                         
                         # Add yawning event
                         if not any(e['type'] == 'fatigue' and 'yawn' in e['description'].lower() and abs(e['frame_number'] - frame_count) < fps*2 for e in events_detected):
+                            event_id = f"yawn_{frame_count}"
+                            thumbnail_path = self.save_event_thumbnail(frame, event_id, thumbnails_dir)
+                            
                             events_detected.append({
                                 'frame_number': frame_count,
                                 'timestamp': self.format_timestamp(frame_count, fps),
                                 'type': 'fatigue',
                                 'description': f'Yawning detected (MAR: {mar:.3f})',
                                 'confidence': min(0.9, (mar - mar_threshold) / mar_threshold),
-                                'severity': 'medium'
+                                'severity': 'medium',
+                                'thumbnail_path': thumbnail_path,
+                                'event_id': event_id
                             })
                 else:
                     consecutive_yawn_frames = 0
@@ -311,13 +347,18 @@ class RealDriverAnalyzer:
                     
                     # Add distraction event
                     if not any(e['type'] == 'distraction' and abs(e['frame_number'] - frame_count) < fps for e in events_detected):
+                        event_id = f"distraction_{frame_count}"
+                        thumbnail_path = self.save_event_thumbnail(frame, event_id, thumbnails_dir)
+                        
                         events_detected.append({
                             'frame_number': frame_count,
                             'timestamp': self.format_timestamp(frame_count, fps),
                             'type': 'distraction',
                             'description': f'Driver looking away from road (deviation: {head_pose["x_deviation"]:.2f})',
                             'confidence': min(0.9, head_pose["x_deviation"]),
-                            'severity': 'high' if head_pose["x_deviation"] > 0.5 else 'medium'
+                            'severity': 'high' if head_pose["x_deviation"] > 0.5 else 'medium',
+                            'thumbnail_path': thumbnail_path,
+                            'event_id': event_id
                         })
             
             # Object detection (phone, etc.)
@@ -330,13 +371,18 @@ class RealDriverAnalyzer:
                     
                     # Add phone usage event
                     if not any(e['type'] == 'distraction' and 'phone' in e['description'].lower() and abs(e['frame_number'] - frame_count) < fps for e in events_detected):
+                        event_id = f"phone_{frame_count}"
+                        thumbnail_path = self.save_event_thumbnail(frame, event_id, thumbnails_dir)
+                        
                         events_detected.append({
                             'frame_number': frame_count,
                             'timestamp': self.format_timestamp(frame_count, fps),
                             'type': 'distraction',
                             'description': 'Phone usage detected while driving',
                             'confidence': 0.87,
-                            'severity': 'critical'
+                            'severity': 'critical',
+                            'thumbnail_path': thumbnail_path,
+                            'event_id': event_id
                         })
             
             self.frame_results.append(frame_analysis)
@@ -578,6 +624,31 @@ if FASTAPI_AVAILABLE and AI_AVAILABLE:
             "processing_mode": "REAL_AI_ANALYSIS",
             "ai_verification": True
         }
+    
+    @app.get("/api/driver-monitoring/thumbnail/{event_id}")
+    async def get_event_thumbnail(event_id: str):
+        """Get thumbnail image for a specific event"""
+        # Search for thumbnail in temp directories
+        temp_dir = tempfile.gettempdir()
+        
+        # Look for thumbnail files matching the event_id pattern
+        import glob
+        thumbnail_pattern = os.path.join(temp_dir, f"driver_monitoring_thumbnails_*", f"event_{event_id}.jpg")
+        matching_files = glob.glob(thumbnail_pattern)
+        
+        if not matching_files:
+            raise HTTPException(status_code=404, detail="Thumbnail not found")
+        
+        thumbnail_path = matching_files[0]  # Use the first match
+        
+        if not os.path.exists(thumbnail_path):
+            raise HTTPException(status_code=404, detail="Thumbnail file not found")
+        
+        return FileResponse(
+            thumbnail_path,
+            media_type="image/jpeg",
+            headers={"Cache-Control": "max-age=3600"}  # Cache for 1 hour
+        )
 
 def main():
     """Main entry point for REAL AI processing"""
