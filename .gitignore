@@ -158,6 +158,27 @@ events.out.tfevents.*
 best.pt
 last.pt
 yolov*.pt
+**/train*/
+**/val*/
+results.csv
+results.png
+confusion_matrix*.png
+*F1_curve.png
+*P_curve.png
+*PR_curve.png
+*R_curve.png
+labels.jpg
+*_batch*.jpg
+args.yaml
+
+# YOLO cache and temporary files
+*.cache
+labels.cache
+**/labels.cache
+train.cache
+val.cache
+**/train.cache
+**/val.cache
 
 # =============================================================================
 # CVAT & ANNOTATION DATA
@@ -202,6 +223,7 @@ monitoring_*.json
 
 # Virtual environments (CRITICAL - never commit venv)
 venv/
+venv_*/
 env/
 ENV/
 .venv/
@@ -426,6 +448,29 @@ memory/claude-flow-data.json
 **/transformers_cache/
 **/huggingface_cache/
 **/torch_cache/
+**/.cache/
+**/cache/
+**/__pycache__/
+.ultralytics/
+ultralytics_cache/
+
+# Additional ML framework caches
+**/torch/
+**/torchvision/
+**/.torch/
+**/matplotlib/
+**/.matplotlib/
+**/tensorboard_logs/
+**/tb_logs/
+
+# General ML cache patterns
+*.cache
+**/*.cache
+.cache/
+cache/
+**/cache/
+*.lock
+**/*.lock
 
 # =============================================================================
 # OPERATING SYSTEM FILES
@@ -565,6 +610,20 @@ pids
 *.swp
 *.swo
 *~
+
+# Jupyter and IPython additional
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Additional Python cache and temp files
+*.pyc
+*.pyo
+*.pyd
+.Python
+__pycache__/
+*.py[cod]
+*$py.class
 
 # =============================================================================
 # CUSTOM PROJECT EXCLUSIONS
