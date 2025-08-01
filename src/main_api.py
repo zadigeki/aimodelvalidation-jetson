@@ -14,6 +14,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from .supervision_integration.api.supervision_endpoints import create_supervision_router
 from .supervision_integration.services.supervision_validation_service import SupervisionValidationService
 from .container import get_container
+from .utils import auto_cleanup_on_startup
 
 # Configure logging
 logging.basicConfig(
@@ -34,6 +35,12 @@ async def lifespan(app: FastAPI):
     try:
         # Initialize services
         logger.info("Initializing AI Model Validation services...")
+        
+        # Run automatic cleanup of old demo files
+        try:
+            auto_cleanup_on_startup()
+        except Exception as e:
+            logger.warning(f"Cleanup failed (non-critical): {e}")
         
         # Initialize Supervision service
         _supervision_service = SupervisionValidationService()

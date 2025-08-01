@@ -14,6 +14,15 @@ import numpy as np
 from ultralytics import YOLO
 import supervision as sv
 import time
+import sys
+import os
+
+# Add src to path for cleanup utility
+sys.path.insert(0, str(Path(__file__).parent / "src"))
+try:
+    from utils import auto_cleanup_on_startup
+except ImportError:
+    auto_cleanup_on_startup = None
 
 app = FastAPI(title="AI Model Validation API")
 
@@ -49,6 +58,28 @@ def initialize_model():
         print(f"❌ Failed to load model: {e}")
         model = None
         box_annotator = None
+
+@app.on_event("startup")
+async def startup_event():
+    """Run on application startup"""
+    print("\n" + "="*60)
+    print("🚀 Starting AI Model Validation API")
+    print("="*60)
+    
+    # Run cleanup if available
+    if auto_cleanup_on_startup:
+        try:
+            print("🧹 Running automatic cleanup of old demo files...")
+            auto_cleanup_on_startup()
+        except Exception as e:
+            print(f"⚠️  Cleanup failed (non-critical): {e}")
+    
+    # Initialize model
+    initialize_model()
+    
+    print("="*60)
+    print("✅ Server ready!")
+    print("="*60 + "\n")
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
