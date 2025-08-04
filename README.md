@@ -10,12 +10,13 @@
 [![Real Services](https://img.shields.io/badge/Real%20Services-Integrated%20✓-brightgreen.svg)](./src/services/real_services.py)
 [![Status](https://img.shields.io/badge/Status-Complete%20✓-success.svg)](#-complete-success-ai-model-validation-pipeline)
 
-This repository contains **THREE distinct AI validation applications**:
+This repository contains **FOUR distinct AI validation applications**:
 
 ## 📑 Table of Contents
 - [Application 1: SPARC+TDD Pipeline](#-application-1-sparctdd-pipeline-original-poc)
 - [Application 2: Roboflow Supervision](#-application-2-roboflow-supervision-integration-production-ready)
 - [Application 3: In-Cab Driver Behavior Detection](#-application-3-in-cab-driver-behavior-detection-fleet-safety)
+- [Application 4: Jetson Orin Nano Edge AI](#-application-4-jetson-orin-nano-edge-ai-optimized)
 - [Which Application to Use?](#-which-application-should-you-use)
 - [Understanding Your Results - Application 1](#-understanding-your-results---application-1-sparctdd-pipeline)
 - [Quick Start Guide](#-quick-start-guide)
@@ -38,6 +39,11 @@ A **comprehensive driver monitoring system** using advanced computer vision (Med
 
 **➡️ [Click here for In-Cab Driver Behavior Detection Documentation](./In-Cab-Behaviour-Detection-README.md)**
 
+## 🚀 Application 4: Jetson Orin Nano Edge AI (Optimized)
+A **high-performance edge AI system** optimized for NVIDIA Jetson Orin Nano with JetPack SDK 6.2. Features CUDA acceleration, TensorRT optimization, RTSP stream support, and real-time AI inference with web-based management interface.
+
+**➡️ [Click here for Jetson Edge AI Documentation](./Jetson/README.md)**
+
 ---
 
 ## 🚦 Which Application Should You Use?
@@ -53,6 +59,20 @@ A **comprehensive driver monitoring system** using advanced computer vision (Med
 **Quick Start:** `./start_complete_system.sh` → Open http://localhost:3000
 
 **Full Documentation:** [In-Cab-Behaviour-Detection-README.md](./In-Cab-Behaviour-Detection-README.md)
+
+### **Use the Jetson Edge AI Application if you want:**
+- 🚀 **High-performance edge inference** on NVIDIA Jetson hardware
+- ⚡ **CUDA acceleration** with TensorRT optimization
+- 📹 **RTSP stream support** for IP cameras and network streams
+- 🌐 **LAN-accessible web interface** with auto-discovery
+- 🔥 **Real-time AI detection** at 100+ FPS
+- 🏭 **Production edge deployment** for industrial applications
+
+**Hardware Required:** NVIDIA Jetson Orin Nano with JetPack SDK 6.2
+
+**Quick Start:** `cd Jetson && python3 run_jetson_api.py` → Open http://jetson.local:8000
+
+**Full Documentation:** [Jetson/README.md](./Jetson/README.md)
 
 ### **Use the Roboflow Supervision Application if you want:**
 - ✅ **General object detection** that works immediately

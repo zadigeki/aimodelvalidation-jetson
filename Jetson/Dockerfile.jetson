@@ -1,0 +1,113 @@
+# Dockerfile for Jetson Orin Nano with JetPack SDK 6.2
+# Optimized for CUDA acceleration and TensorRT inference
+
+# Base image with JetPack 6.2 (L4T 36.4)
+FROM nvcr.io/nvidia/l4t-ml:r36.4.0-py3
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV CUDA_HOME=/usr/local/cuda-12.6
+ENV PATH=${CUDA_HOME}/bin:${PATH}
+ENV LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
+ENV OPENBLAS_CORETYPE=ARMV8
+ENV CUDA_MANAGED_FORCE_DEVICE_ALLOC=1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    # Build tools
+    build-essential \
+    cmake \
+    git \
+    wget \
+    curl \
+    # Python development
+    python3-pip \
+    python3-dev \
+    python3-setuptools \
+    python3-wheel \
+    # OpenCV dependencies (using pre-installed CUDA version)
+    libopencv-dev \
+    python3-opencv \
+    # GStreamer for hardware video processing
+    gstreamer1.0-tools \
+    gstreamer1.0-alsa \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    # DeepStream dependencies
+    libgstrtspserver-1.0-0 \
+    libgstrtspserver-1.0-dev \
+    # System monitoring
+    htop \
+    iotop \
+    tegrastats \
+    # Network utilities
+    net-tools \
+    iputils-ping \
+    avahi-daemon \
+    avahi-utils \
+    # Other utilities
+    nano \
+    tmux \
+    && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip and install build tools
+RUN pip3 install --upgrade pip setuptools wheel
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements-jetson.txt .
+
+# Install Python dependencies
+# Note: PyTorch should be installed from NVIDIA wheel for Jetson
+RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124 && \
+    pip3 install -r requirements-jetson.txt
+
+# Install jetson-stats for monitoring
+RUN pip3 install jetson-stats
+
+# Copy application code
+COPY . .
+
+# Create necessary directories
+RUN mkdir -p /app/models \
+    /app/data \
+    /app/logs \
+    /app/static \
+    /app/uploads \
+    /app/outputs
+
+# Download YOLOv8 model if not present
+RUN python3 -c "from ultralytics import YOLO; YOLO('yolov8n.pt')" || true
+
+# Convert model to TensorRT engine (optional, can be done at runtime)
+# RUN python3 -c "from src.jetson.tensorrt_model import YOLOv8TensorRT; \
+#     model = YOLOv8TensorRT('yolov8n.pt', precision='fp16'); \
+#     model.save_engine('models/yolov8n.engine')"
+
+# Set permissions
+RUN chmod -R 755 /app
+
+# Expose ports
+EXPOSE 8000 5353
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Set entrypoint script
+COPY docker-entrypoint-jetson.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Default command
+CMD ["python3", "-m", "uvicorn", "src.jetson_api:app", \
+     "--host", "0.0.0.0", "--port", "8000", \
+     "--workers", "1", "--loop", "uvloop"]

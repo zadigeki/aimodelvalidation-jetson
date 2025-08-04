@@ -1,0 +1,226 @@
+# AI Model Validation - Jetson Orin Nano Requirements
+# Optimized for JetPack SDK 6.2 with CUDA acceleration
+# Python 3.10+ (JetPack 6.2 default)
+
+# ==============================================================================
+# JETSON-SPECIFIC NVIDIA LIBRARIES
+# ==============================================================================
+# Note: Most NVIDIA libraries are pre-installed with JetPack SDK 6.2
+# These are references for version compatibility
+
+# Pre-installed with JetPack 6.2:
+# - CUDA 12.6
+# - cuDNN 9.5
+# - TensorRT 10.7
+# - VPI 3.2
+# - OpenCV 4.10 with CUDA support
+# - DeepStream SDK 7.1
+# - Multimedia API
+
+# ==============================================================================
+# CORE AI/ML FRAMEWORKS - JETSON OPTIMIZED
+# ==============================================================================
+
+# PyTorch for Jetson (pre-built wheel from NVIDIA)
+# Install with: pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+# torch==2.5.0+cu124
+# torchvision==0.20.0+cu124
+# torchaudio==2.5.0+cu124
+
+# Computer Vision - Use system OpenCV with CUDA
+# opencv-python is replaced by system OpenCV
+# Access via: import cv2 (pre-installed with CUDA support)
+
+# YOLO optimized for TensorRT
+ultralytics==8.3.0               # Latest version with TensorRT support
+onnx==1.17.0                    # For model conversion
+onnxruntime-gpu==1.20.0         # GPU inference runtime
+
+# ==============================================================================
+# TENSORRT OPTIMIZATION
+# ==============================================================================
+
+# TensorRT Python bindings (use system installation)
+# tensorrt==10.7.0               # Pre-installed with JetPack
+pycuda==2024.1.2                # CUDA Python bindings
+tensorrt-dispatch==1.0.0        # TensorRT dispatch utilities
+tensorrt-lean==10.7.0           # Lightweight TensorRT utilities
+
+# ==============================================================================
+# DEEPSTREAM INTEGRATION
+# ==============================================================================
+
+# DeepStream Python bindings
+pyds==1.1.11                    # Python bindings for DeepStream
+pygst==0.1.0                    # GStreamer Python bindings
+gi==3.48.0                      # GObject introspection
+
+# ==============================================================================
+# VIDEO PROCESSING - GPU ACCELERATED
+# ==============================================================================
+
+# Hardware-accelerated video processing
+vidgear[core]==0.3.3            # Video processing with hardware acceleration
+ffmpeg-python==0.2.0            # FFmpeg bindings for hardware encoding
+imageio-ffmpeg==0.5.1           # Hardware video I/O
+
+# ==============================================================================
+# WEB & API FRAMEWORKS - OPTIMIZED
+# ==============================================================================
+
+# Async web framework for better performance
+fastapi==0.115.0                # Latest FastAPI
+uvicorn[standard]==0.32.0       # ASGI server with uvloop
+gunicorn==23.0.0                # Production WSGI server
+aiofiles==24.1.0                # Async file operations
+
+# WebSocket for real-time streaming
+websockets==13.1                 # WebSocket client/server
+python-socketio==5.11.0         # Socket.IO support
+python-multipart==0.0.12        # Multipart form data
+
+# ==============================================================================
+# PERFORMANCE MONITORING
+# ==============================================================================
+
+# GPU monitoring
+nvidia-ml-py==12.560.30         # NVIDIA Management Library Python bindings
+gpustat==1.1.1                  # GPU status monitoring
+py3nvml==0.2.7                  # Python 3 NVIDIA Management Library
+jetson-stats==4.2.0             # Jetson-specific monitoring
+
+# System monitoring
+psutil==6.1.0                   # System resource monitoring
+prometheus-client==0.21.0       # Metrics collection
+grafana-api==1.0.3              # Grafana integration
+
+# ==============================================================================
+# DATA PROCESSING - OPTIMIZED
+# ==============================================================================
+
+# NumPy with CUDA support
+cupy-cuda12x==13.3.0            # NumPy-like API with CUDA
+numba==0.60.0                   # JIT compilation for Python
+numpy==1.26.4                   # Numerical computing
+
+# Data handling
+pandas==2.2.0                   # Data manipulation
+pyarrow==18.0.0                 # Columnar data format
+h5py==3.11.0                    # HDF5 file format
+
+# ==============================================================================
+# NETWORKING & DEPLOYMENT
+# ==============================================================================
+
+# Service discovery for LAN
+zeroconf==0.135.0               # mDNS/Bonjour service discovery
+netifaces==0.11.0               # Network interface information
+python-iptables==1.0.1          # Firewall configuration
+
+# API client libraries
+httpx==0.27.0                   # Modern HTTP client
+aiohttp==3.10.0                 # Async HTTP client/server
+requests==2.32.0                # HTTP library
+
+# ==============================================================================
+# CONTAINER & DEPLOYMENT
+# ==============================================================================
+
+# Docker SDK
+docker==7.1.0                   # Docker API client
+docker-compose==1.29.2          # Docker Compose support
+
+# Process management
+supervisor==4.2.5               # Process control system
+circus==0.18.0                  # Process & socket manager
+
+# ==============================================================================
+# LOGGING & DEBUGGING
+# ==============================================================================
+
+# Structured logging
+structlog==24.4.0               # Structured logging
+loguru==0.7.2                   # Modern logging
+python-json-logger==2.0.7       # JSON logging
+
+# Debugging tools
+py-spy==0.3.14                  # Sampling profiler
+line-profiler==4.1.3            # Line-by-line profiler
+memory-profiler==0.61.0         # Memory profiler
+
+# ==============================================================================
+# JETSON-SPECIFIC UTILITIES
+# ==============================================================================
+
+# Jetson GPIO
+Jetson.GPIO==2.1.9              # GPIO library for Jetson
+jetson-inference==2.0.0         # Jetson inference utilities
+jetson-utils==2.0.0             # Jetson utility functions
+
+# Camera utilities
+v4l2-python3==0.3.4             # Video4Linux2 Python bindings
+picamera2==0.3.22               # Camera interface library
+
+# ==============================================================================
+# TESTING - MINIMAL FOR PRODUCTION
+# ==============================================================================
+
+pytest==8.3.0                   # Testing framework
+pytest-asyncio==0.24.0          # Async testing
+pytest-benchmark==4.0.0         # Performance benchmarking
+
+# ==============================================================================
+# OPTIMIZATION TOOLS
+# ==============================================================================
+
+# Model optimization
+torch2trt==0.5.0                # PyTorch to TensorRT converter
+onnx2trt==0.5.0                 # ONNX to TensorRT converter
+tf2onnx==1.16.0                 # TensorFlow to ONNX converter
+
+# Quantization
+pytorch-quantization==2.1.2     # PyTorch quantization toolkit
+onnxruntime-tools==1.7.0        # ONNX optimization tools
+
+# ==============================================================================
+# REDUCED DEPENDENCIES
+# ==============================================================================
+# The following are removed or replaced for Jetson optimization:
+# - opencv-python (use system OpenCV with CUDA)
+# - opencv-contrib-python (included in system OpenCV)
+# - heavy ML libraries not needed for inference
+# - development tools (moved to requirements-jetson-dev.txt)
+
+# ==============================================================================
+# INSTALLATION NOTES FOR JETSON
+# ==============================================================================
+
+# Pre-installation steps:
+# 1. Flash Jetson Orin Nano with JetPack SDK 6.2
+# 2. Enable all CPU cores: sudo jetson_clocks
+# 3. Set power mode: sudo nvpmodel -m 0
+# 4. Install system dependencies:
+#    sudo apt-get update
+#    sudo apt-get install -y python3-pip python3-dev python3-setuptools
+#    sudo apt-get install -y libhdf5-serial-dev hdf5-tools libhdf5-dev
+#    sudo apt-get install -y zlib1g-dev zip libjpeg8-dev liblapack-dev
+#    sudo apt-get install -y libopenblas-base libopenblas-dev gfortran
+#    sudo apt-get install -y libavcodec-dev libavformat-dev libswscale-dev
+#    sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+#    sudo apt-get install -y libgtk-3-dev libpng-dev libjpeg-dev
+
+# 5. Install PyTorch for Jetson:
+#    pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+
+# 6. Install this requirements file:
+#    pip3 install -r requirements-jetson.txt
+
+# 7. Optimize system:
+#    - Enable swap: sudo fallocate -l 8G /swapfile
+#    - Set GPU/DLA clocks: sudo jetson_clocks --fan
+
+# Performance tips:
+# - Use TensorRT models instead of PyTorch for inference
+# - Enable CUDA unified memory: export CUDA_MANAGED_FORCE_DEVICE_ALLOC=1
+# - Use hardware video encoding/decoding through GStreamer
+# - Monitor temps: tegrastats or jetson-stats
