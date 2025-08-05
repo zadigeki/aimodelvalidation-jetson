@@ -174,6 +174,19 @@ install_pytorch_jetson() {
 install_application() {
     echo -e "\n${YELLOW}Installing application...${NC}"
     
+    # Debug information
+    echo -e "${YELLOW}Debug: Function install_application started${NC}"
+    echo "Current user: $(whoami)"
+    echo "Current directory: $(pwd)"
+    echo "APP_DIR variable: $APP_DIR"
+    
+    # Check if we're in virtual environment
+    if [[ -n "$VIRTUAL_ENV" ]]; then
+        echo "Virtual environment active: $VIRTUAL_ENV"
+    else
+        echo "No virtual environment active"
+    fi
+    
     # Determine the script directory and Jetson project root
     SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
     SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
@@ -217,20 +230,43 @@ install_application() {
     
     # Copy application files from Jetson directory
     if [ -d "$JETSON_DIR/src" ]; then
-        cp -r "$JETSON_DIR/src" ./
-        cp -r "$JETSON_DIR/static" ./
-        cp "$JETSON_DIR/requirements-jetson.txt" ./
-        cp "$JETSON_DIR/run_jetson_api.py" ./
+        echo -e "${YELLOW}Copying application files...${NC}"
+        
+        # Copy with verbose output and error checking
+        echo "Copying src directory..."
+        cp -rv "$JETSON_DIR/src" ./ || { echo -e "${RED}Failed to copy src directory${NC}"; exit 1; }
+        
+        echo "Copying static directory..."
+        cp -rv "$JETSON_DIR/static" ./ || { echo -e "${RED}Failed to copy static directory${NC}"; exit 1; }
+        
+        echo "Copying requirements-jetson.txt..."
+        cp -v "$JETSON_DIR/requirements-jetson.txt" ./ || { echo -e "${RED}Failed to copy requirements-jetson.txt${NC}"; exit 1; }
+        
+        echo "Copying run_jetson_api.py..."
+        cp -v "$JETSON_DIR/run_jetson_api.py" ./ || { echo -e "${RED}Failed to copy run_jetson_api.py${NC}"; exit 1; }
         
         # Also copy other useful files
         if [ -f "$JETSON_DIR/setup.py" ]; then
-            cp "$JETSON_DIR/setup.py" ./
+            echo "Copying setup.py..."
+            cp -v "$JETSON_DIR/setup.py" ./ || echo -e "${YELLOW}Warning: Failed to copy setup.py${NC}"
         fi
         if [ -f "$JETSON_DIR/test_installation.py" ]; then
-            cp "$JETSON_DIR/test_installation.py" ./
+            echo "Copying test_installation.py..."
+            cp -v "$JETSON_DIR/test_installation.py" ./ || echo -e "${YELLOW}Warning: Failed to copy test_installation.py${NC}"
         fi
         
-        echo -e "${GREEN}✓ Application files copied${NC}"
+        echo -e "${GREEN}✓ Application files copied successfully${NC}"
+        
+        # Verify files were copied
+        echo -e "${YELLOW}Verifying copied files...${NC}"
+        for file in "src" "static" "requirements-jetson.txt" "run_jetson_api.py"; do
+            if [[ -e "$file" ]]; then
+                echo -e "✓ Verified: $file"
+            else
+                echo -e "${RED}❌ Missing after copy: $file${NC}"
+                exit 1
+            fi
+        done
     else
         echo -e "${RED}Error: Application files not found in $JETSON_DIR${NC}"
         echo -e "${YELLOW}Current working directory: $(pwd)${NC}"
@@ -245,12 +281,40 @@ install_application() {
     fi
     
     # Install Python dependencies
-    pip install -r requirements-jetson.txt
+    echo -e "${YELLOW}Installing Python dependencies...${NC}"
+    echo "Current directory: $(pwd)"
+    echo "Virtual environment status:"
+    which python || echo "python not found in PATH"
+    which pip || echo "pip not found in PATH"
+    
+    # Check if requirements file exists and is readable
+    if [[ ! -f "requirements-jetson.txt" ]]; then
+        echo -e "${RED}Error: requirements-jetson.txt not found in $(pwd)${NC}"
+        ls -la
+        exit 1
+    fi
+    
+    echo "Contents of requirements-jetson.txt:"
+    cat requirements-jetson.txt
+    
+    echo -e "${YELLOW}Running pip install...${NC}"
+    pip install -r requirements-jetson.txt || { 
+        echo -e "${RED}Failed to install Python dependencies${NC}"
+        echo "pip install error details:"
+        pip install -r requirements-jetson.txt -v
+        exit 1
+    }
+    
+    echo -e "${GREEN}✓ Python dependencies installed${NC}"
     
     # Create necessary directories
-    mkdir -p models data logs uploads outputs config
+    echo -e "${YELLOW}Creating necessary directories...${NC}"
+    mkdir -pv models data logs uploads outputs config || {
+        echo -e "${RED}Failed to create directories${NC}"
+        exit 1
+    }
     
-    echo -e "${GREEN}✓ Application installed${NC}"
+    echo -e "${GREEN}✓ Application installed successfully${NC}"
 }
 
 # Function to download models
