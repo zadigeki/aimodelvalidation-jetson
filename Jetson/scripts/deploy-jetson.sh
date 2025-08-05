@@ -175,13 +175,33 @@ install_application() {
     echo -e "\n${YELLOW}Installing application...${NC}"
     
     # Determine the script directory and Jetson project root
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || echo "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
+    SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+    SCRIPT_DIR="$(dirname "$SCRIPT_PATH")"
     JETSON_DIR="$(dirname "$SCRIPT_DIR")"
     
-    # Fallback: if running from Jetson directory, detect it
-    if [[ ! -d "$JETSON_DIR/src" && -d "./src" ]]; then
+    echo -e "${YELLOW}Script path: $SCRIPT_PATH${NC}"
+    echo -e "${YELLOW}Script directory: $SCRIPT_DIR${NC}"
+    echo -e "${YELLOW}Initial Jetson directory: $JETSON_DIR${NC}"
+    
+    # Check multiple possible locations for the Jetson files
+    if [[ -d "$JETSON_DIR/src" ]]; then
+        echo -e "${GREEN}✓ Found Jetson files in: $JETSON_DIR${NC}"
+    elif [[ -d "./src" ]]; then
         JETSON_DIR="$(pwd)"
-        echo -e "${YELLOW}Detected running from Jetson directory directly${NC}"
+        echo -e "${GREEN}✓ Found Jetson files in current directory: $JETSON_DIR${NC}"
+    elif [[ -d "../src" ]]; then
+        JETSON_DIR="$(cd .. && pwd)"
+        echo -e "${GREEN}✓ Found Jetson files in parent directory: $JETSON_DIR${NC}"
+    elif [[ -d "../../Jetson/src" ]]; then
+        JETSON_DIR="$(cd ../../Jetson && pwd)"
+        echo -e "${GREEN}✓ Found Jetson files in ../../Jetson: $JETSON_DIR${NC}"
+    else
+        # Last resort: search for the Jetson directory
+        SEARCH_DIR="$(find ~/aimodelvalidation-jetson -name "src" -type d -path "*/Jetson/src" 2>/dev/null | head -1)"
+        if [[ -n "$SEARCH_DIR" ]]; then
+            JETSON_DIR="$(dirname "$SEARCH_DIR")"
+            echo -e "${GREEN}✓ Found Jetson files via search: $JETSON_DIR${NC}"
+        fi
     fi
     
     echo -e "${YELLOW}Script directory: $SCRIPT_DIR${NC}"
@@ -213,8 +233,14 @@ install_application() {
         echo -e "${GREEN}✓ Application files copied${NC}"
     else
         echo -e "${RED}Error: Application files not found in $JETSON_DIR${NC}"
-        echo -e "${YELLOW}Looking for files in:${NC}"
-        ls -la "$JETSON_DIR" || echo "Directory not accessible"
+        echo -e "${YELLOW}Current working directory: $(pwd)${NC}"
+        echo -e "${YELLOW}Files in current directory:${NC}"
+        ls -la .
+        echo -e "${YELLOW}Files in detected Jetson directory ($JETSON_DIR):${NC}"
+        ls -la "$JETSON_DIR" 2>/dev/null || echo "Directory not accessible"
+        echo -e "${YELLOW}Searching for src directories:${NC}"
+        find . -name "src" -type d 2>/dev/null || echo "No src directories found"
+        echo -e "${RED}Please run this script from the Jetson directory or ensure the file structure is correct${NC}"
         exit 1
     fi
     

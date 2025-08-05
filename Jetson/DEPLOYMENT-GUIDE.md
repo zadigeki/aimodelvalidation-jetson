@@ -8,19 +8,21 @@ git clone https://github.com/zadigeki/aimodelvalidation-jetson.git
 cd aimodelvalidation-jetson/Jetson
 ```
 
-### 2. Run Deployment Script
+### 2. Verify Setup (RECOMMENDED)
 ```bash
-# Option 1: Run from Jetson directory (RECOMMENDED)
-chmod +x scripts/deploy-jetson.sh
-./scripts/deploy-jetson.sh
-
-# Option 2: Run from scripts directory (alternative)
-cd scripts
-chmod +x deploy-jetson.sh
-./deploy-jetson.sh
+# Check if everything is set up correctly before deploying
+chmod +x scripts/check-setup.sh
+./scripts/check-setup.sh
 ```
 
-### 3. Access Application
+### 3. Run Deployment Script
+```bash
+# After verifying setup, run the deployment
+chmod +x scripts/deploy-jetson.sh
+./scripts/deploy-jetson.sh
+```
+
+### 4. Access Application
 - Web Interface: `http://<jetson-ip>:8000`
 - Auto-Discovery: `http://jetson.local:8000`
 
@@ -63,11 +65,15 @@ This means the script couldn't find the Jetson project files or has path resolut
 
 **Solution:**
 ```bash
-# Make sure you're in the right directory
+# First, verify your setup
 cd /path/to/aimodelvalidation-jetson/Jetson
-ls -la  # Should show src/, static/, scripts/, etc.
+chmod +x scripts/check-setup.sh
+./scripts/check-setup.sh
 
-# Run the script (this should work now)
+# The setup checker will show you exactly what's missing
+# Make sure you see all required files before proceeding
+
+# If setup checker passes, run deployment:
 chmod +x scripts/deploy-jetson.sh
 ./scripts/deploy-jetson.sh
 
