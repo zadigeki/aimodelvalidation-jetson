@@ -10,8 +10,14 @@ cd aimodelvalidation-jetson/Jetson
 
 ### 2. Run Deployment Script
 ```bash
+# Option 1: Run from Jetson directory (RECOMMENDED)
 chmod +x scripts/deploy-jetson.sh
 ./scripts/deploy-jetson.sh
+
+# Option 2: Run from scripts directory (alternative)
+cd scripts
+chmod +x deploy-jetson.sh
+./deploy-jetson.sh
 ```
 
 ### 3. Access Application
@@ -49,17 +55,24 @@ The `deploy-jetson.sh` script automatically:
 
 ## Troubleshooting
 
-### Error: "Application files not found"
-This means the script couldn't find the Jetson project files. Make sure you:
-1. Run the script from the `Jetson/` directory
+### Error: "Application files not found" or "cd: ./scripts: No such file or directory"
+This means the script couldn't find the Jetson project files or has path resolution issues. Make sure you:
+1. Run the script from the `Jetson/` directory (RECOMMENDED)
 2. The directory structure is intact with `src/`, `static/`, etc.
+3. Use the absolute path to the script if needed
 
 **Solution:**
 ```bash
 # Make sure you're in the right directory
 cd /path/to/aimodelvalidation-jetson/Jetson
 ls -la  # Should show src/, static/, scripts/, etc.
+
+# Run the script (this should work now)
+chmod +x scripts/deploy-jetson.sh
 ./scripts/deploy-jetson.sh
+
+# If still having issues, try absolute path:
+bash /path/to/aimodelvalidation-jetson/Jetson/scripts/deploy-jetson.sh
 ```
 
 ### Error: "Python X.X not found"

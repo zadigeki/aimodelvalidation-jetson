@@ -175,11 +175,25 @@ install_application() {
     echo -e "\n${YELLOW}Installing application...${NC}"
     
     # Determine the script directory and Jetson project root
-    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || echo "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")")"
     JETSON_DIR="$(dirname "$SCRIPT_DIR")"
+    
+    # Fallback: if running from Jetson directory, detect it
+    if [[ ! -d "$JETSON_DIR/src" && -d "./src" ]]; then
+        JETSON_DIR="$(pwd)"
+        echo -e "${YELLOW}Detected running from Jetson directory directly${NC}"
+    fi
     
     echo -e "${YELLOW}Script directory: $SCRIPT_DIR${NC}"
     echo -e "${YELLOW}Jetson directory: $JETSON_DIR${NC}"
+    
+    # Validate that we found the correct directory
+    if [[ ! -d "$JETSON_DIR" ]]; then
+        echo -e "${RED}Error: Could not determine Jetson directory${NC}"
+        echo -e "${YELLOW}Current working directory: $(pwd)${NC}"
+        echo -e "${YELLOW}Script location: ${BASH_SOURCE[0]}${NC}"
+        exit 1
+    fi
     
     # Copy application files from Jetson directory
     if [ -d "$JETSON_DIR/src" ]; then
