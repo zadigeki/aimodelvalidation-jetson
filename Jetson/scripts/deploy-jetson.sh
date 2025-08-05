@@ -13,7 +13,6 @@ NC='\033[0m' # No Color
 # Configuration
 APP_DIR="/home/$USER/ai-model-validation"
 SERVICE_NAME="ai-model-validation"
-PYTHON_VERSION="3.10"
 
 echo -e "${GREEN}AI Model Validation - Jetson Deployment Script${NC}"
 echo "=============================================="
@@ -68,12 +67,35 @@ optimize_performance() {
 install_system_deps() {
     echo -e "\n${YELLOW}Installing system dependencies...${NC}"
     
+    # Detect Python version
+    if command -v python3 &> /dev/null; then
+        DETECTED_PYTHON_VERSION=$(python3 --version | cut -d' ' -f2 | cut -d'.' -f1,2)
+        echo -e "${GREEN}✓ Detected Python version: ${DETECTED_PYTHON_VERSION}${NC}"
+    else
+        echo -e "${RED}Error: Python 3 not found${NC}"
+        exit 1
+    fi
+    
     sudo apt-get update
+    
+    # Install Python packages based on what's available
+    echo -e "${YELLOW}Installing Python packages...${NC}"
     sudo apt-get install -y \
-        python${PYTHON_VERSION} \
-        python${PYTHON_VERSION}-pip \
-        python${PYTHON_VERSION}-dev \
-        python${PYTHON_VERSION}-venv \
+        python3 \
+        python3-pip \
+        python3-dev \
+        python3-venv \
+        python3-setuptools \
+        python3-wheel || true
+    
+    # Try to install version-specific packages if available
+    sudo apt-get install -y \
+        python${DETECTED_PYTHON_VERSION} \
+        python${DETECTED_PYTHON_VERSION}-dev \
+        python${DETECTED_PYTHON_VERSION}-venv || true
+    
+    # Install other system dependencies
+    sudo apt-get install -y \
         build-essential \
         cmake \
         git \
@@ -110,12 +132,12 @@ setup_python_env() {
     mkdir -p "$APP_DIR"
     cd "$APP_DIR"
     
-    # Create virtual environment
-    python${PYTHON_VERSION} -m venv venv
+    # Create virtual environment using python3
+    python3 -m venv venv
     source venv/bin/activate
     
     # Upgrade pip
-    pip install --upgrade pip setuptools wheel
+    python3 -m pip install --upgrade pip setuptools wheel
     
     echo -e "${GREEN}✓ Python environment created${NC}"
 }
