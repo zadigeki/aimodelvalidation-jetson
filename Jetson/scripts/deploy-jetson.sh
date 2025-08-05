@@ -1,6 +1,21 @@
 #!/bin/bash
 # Deployment script for AI Model Validation on Jetson Orin Nano
 # This script sets up and deploys the application on Jetson hardware
+#
+# USAGE:
+#   cd /path/to/aimodelvalidation-jetson/Jetson
+#   chmod +x scripts/deploy-jetson.sh
+#   ./scripts/deploy-jetson.sh
+#
+# The script will:
+#   1. Detect Jetson hardware and optimize performance
+#   2. Install system dependencies (Python, CUDA, OpenCV, etc.)
+#   3. Create Python virtual environment
+#   4. Install PyTorch with CUDA support
+#   5. Copy and install the application
+#   6. Download and optimize AI models
+#   7. Create systemd service for auto-start
+#   8. Configure firewall and mDNS
 
 set -e
 
@@ -159,15 +174,33 @@ install_pytorch_jetson() {
 install_application() {
     echo -e "\n${YELLOW}Installing application...${NC}"
     
-    # Copy application files (assuming they're in current directory)
-    if [ -d "../src" ]; then
-        cp -r ../src ./
-        cp -r ../static ./
-        cp ../requirements-jetson.txt ./
-        cp ../run_api.py ./
+    # Determine the script directory and Jetson project root
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    JETSON_DIR="$(dirname "$SCRIPT_DIR")"
+    
+    echo -e "${YELLOW}Script directory: $SCRIPT_DIR${NC}"
+    echo -e "${YELLOW}Jetson directory: $JETSON_DIR${NC}"
+    
+    # Copy application files from Jetson directory
+    if [ -d "$JETSON_DIR/src" ]; then
+        cp -r "$JETSON_DIR/src" ./
+        cp -r "$JETSON_DIR/static" ./
+        cp "$JETSON_DIR/requirements-jetson.txt" ./
+        cp "$JETSON_DIR/run_jetson_api.py" ./
+        
+        # Also copy other useful files
+        if [ -f "$JETSON_DIR/setup.py" ]; then
+            cp "$JETSON_DIR/setup.py" ./
+        fi
+        if [ -f "$JETSON_DIR/test_installation.py" ]; then
+            cp "$JETSON_DIR/test_installation.py" ./
+        fi
+        
         echo -e "${GREEN}✓ Application files copied${NC}"
     else
-        echo -e "${RED}Error: Application files not found${NC}"
+        echo -e "${RED}Error: Application files not found in $JETSON_DIR${NC}"
+        echo -e "${YELLOW}Looking for files in:${NC}"
+        ls -la "$JETSON_DIR" || echo "Directory not accessible"
         exit 1
     fi
     
@@ -175,7 +208,7 @@ install_application() {
     pip install -r requirements-jetson.txt
     
     # Create necessary directories
-    mkdir -p models data logs uploads outputs
+    mkdir -p models data logs uploads outputs config
     
     echo -e "${GREEN}✓ Application installed${NC}"
 }
@@ -194,7 +227,7 @@ download_models() {
     python -c "
 import sys
 sys.path.append('..')
-from src.jetson.tensorrt_model import YOLOv8TensorRT
+from src.tensorrt_model import YOLOv8TensorRT
 model = YOLOv8TensorRT('yolov8n.pt', precision='fp16')
 model.save_engine('yolov8n.engine')
 print('TensorRT engine created')
@@ -221,7 +254,7 @@ Environment="PATH=$APP_DIR/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/us
 Environment="PYTHONPATH=$APP_DIR"
 Environment="CUDA_VISIBLE_DEVICES=0"
 ExecStartPre=/bin/bash -c 'sudo nvpmodel -m 0 && sudo jetson_clocks'
-ExecStart=$APP_DIR/venv/bin/python -m uvicorn src.jetson.jetson_api:app --host 0.0.0.0 --port 8000 --workers 1 --loop uvloop
+ExecStart=$APP_DIR/venv/bin/python -m uvicorn src.jetson_api:app --host 0.0.0.0 --port 8000 --workers 1 --loop uvloop
 Restart=always
 RestartSec=10
 
